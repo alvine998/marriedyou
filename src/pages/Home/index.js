@@ -1,6 +1,6 @@
 import { Icon } from "native-base";
 import React,{Component} from "react";
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Animated, BackHandler, Image, ScrollView, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
 import normalize from "react-native-normalize";
 import { logo } from "../../assets";
 
@@ -10,8 +10,58 @@ export default class Home extends Component{
     constructor(props){
         super(props);
         this.state={
-
+            backClickCount:0
         }
+        this.springValue = new Animated.Value(100);
+        this.handleExit = this.handleExit.bind(this)
+    }
+
+    _spring(){
+        this.setState({backClickCount: 1}, () => {
+            Animated.sequence([
+                Animated.spring(
+                    this.springValue, 
+                    {
+                        toValue: -.15 * height,
+                        friction: 5,
+                        duration: 300,
+                        useNativeDriver: true,
+                    }
+                ),
+                Animated.timing(
+                    this.springValue,
+                    {
+                        toValue: 100,
+                        duration: 300,
+                        useNativeDriver: true,
+                    }
+                ),
+            ]).start(() => {
+                this.setState({backClickCount: 0});
+            });
+        })
+    }
+
+    handleExit(){
+        setTimeout(() => {
+            this.setState({backClickCount: 0});
+          }, 2000);
+        
+        if(this.state.backClickCount == 0){
+        this.setState({backClickCount: this.state.backClickCount + 1});
+        ToastAndroid.show("Tekan 2 kali untuk keluar!", ToastAndroid.SHORT);
+        } else {
+        BackHandler.exitApp()
+        }
+        return true;
+    }
+
+    componentDidMount(){
+        BackHandler.addEventListener("hardwareBackPress", this.handleExit)
+    }
+
+    componentWillUnmount(){
+        BackHandler.removeEventListener("hardwareBackPress", this.handleExit)
     }
 
     render(){
@@ -23,9 +73,11 @@ export default class Home extends Component{
                     </View>
                     <View>
                         <View style={{flexDirection:'row', padding:normalize(30)}}>
-                            <View style={styles.border}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('Profil')}>
+                                <View style={styles.border}>
 
-                            </View>
+                                </View>
+                            </TouchableOpacity>
                             <View style={{paddingLeft:normalize(20)}} />
                             <View style={styles.border}>
 

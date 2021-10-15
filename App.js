@@ -6,6 +6,7 @@ import BotNav from "./src/components/BotNav";
 import RuangObrolan from "./src/pages/Chat/RuangObrolan";
 import Home from "./src/pages/Home";
 import Login from "./src/pages/Login";
+import Profil from "./src/pages/Profil";
 import Register from "./src/pages/Register";
 import Splash from "./src/pages/Splash";
 
@@ -21,6 +22,8 @@ const App = () => {
 
         {/* Home */}
         <Stack.Screen name="Home" component={Home}/>
+        <Stack.Screen name="Profil" component={Profil}/>
+
 
         {/* Chat */}
         <Stack.Screen name="RuangObrolan" component={RuangObrolan}/>
