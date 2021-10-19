@@ -91,7 +91,7 @@ export default class RuangObrolan extends Component{
 
                         {/* Footer Kegiatan */}
                         <View style={{padding:normalize(10), paddingLeft:normalize(10)}}>
-                            <TouchableOpacity style={{alignItems:'center', justifyContent:'center'}}>
+                            <TouchableOpacity onPress={() => this.props.navigation.push('Kegiatan')} style={{alignItems:'center', justifyContent:'center'}}>
                                 <Icon type={'FontAwesome5'} name="calendar-alt" style={styles.iconFooter} />
                                 <Text style={styles.fontFooter}>Kegiatan</Text>
                             </TouchableOpacity>
@@ -103,7 +103,7 @@ export default class RuangObrolan extends Component{
 
                         {/* Footer Akun */}
                         <View style={{padding:normalize(13), paddingLeft:normalize(15)}}>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('Account')} style={{alignItems:'center', justifyContent:'center'}}>
+                            <TouchableOpacity onPress={() => this.props.navigation.push('Account')} style={{alignItems:'center', justifyContent:'center'}}>
                                 <Icon type={'FontAwesome'} name="user-circle" style={styles.iconFooter} />
                                 <Text style={styles.fontFooter}>Akun</Text>
                             </TouchableOpacity>

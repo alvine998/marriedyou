@@ -4,6 +4,7 @@ import React from "react";
 import { View } from "react-native";
 import BotNav from "./src/components/BotNav";
 import Account from "./src/pages/Account";
+import Kegiatan from "./src/pages/Agenda/Kegiatan";
 import RuangObrolan from "./src/pages/Chat/RuangObrolan";
 import Home from "./src/pages/Home";
 import Login from "./src/pages/Login";
@@ -31,6 +32,9 @@ const App = () => {
 
         {/* Account */}
         <Stack.Screen name="Account" component={Account}/>
+
+        {/* Kegiatan */}
+        <Stack.Screen name="Kegiatan" component={Kegiatan}/>
 
       </Stack.Navigator>
     </NavigationContainer>

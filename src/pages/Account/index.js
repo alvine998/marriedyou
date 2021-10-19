@@ -1,15 +1,120 @@
 import AsyncStorage from "@react-native-community/async-storage";
+import axios from "axios";
 import { Button, Icon } from "native-base";
 import React, {Component} from "react";
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import ImageCropPicker from "react-native-image-crop-picker";
 import normalize from "react-native-normalize";
+import { uploadReplaceImage } from "../../../utils";
 
 export default class Account extends Component{
     constructor(props){
         super(props);
         this.state={
-
+            photo:'',
+            oldPhoto:'',
+            nama:'',
+            usia:'',
+            alamat:'',
+            hobi:'',
+            tentang:''
         }
+    }
+
+    selectImage(){
+        ImageCropPicker.openPicker({
+            width:normalize(150),
+            height:normalize(150),
+            cropping: true,
+            cropperCircleOverlay:true
+        }).then(image => {
+            console.log(image.path);
+            this.setState({photo: image.path})
+            this.uploadImage();
+        })
+    }
+
+    async uploadImage() {
+        console.log(this.state.photo);
+        const newPhoto = this.state.photo;
+        const oldPhoto = this.state.oldPhoto;
+        const urlImage = `http://localhost:4000/resources/upload/`;
+        let newUpload = '';
+        if(newPhoto === urlImage + oldPhoto){
+            newUpload = oldPhoto;
+        } else {
+            newUpload = newPhoto
+        }
+
+        let result = {info:''}
+        try{
+            result = await uploadReplaceImage(oldPhoto,newUpload,newPhoto)
+        } catch(err) {
+            console.log('err:', err)
+        }
+
+        const dataUpdate = {
+            image: result.info
+        }
+
+        await AsyncStorage.getItem('emailKey')
+        .then(
+            res => {
+                axios.put(`http://10.0.2.2:4000/users/${res}`, dataUpdate)
+                .then(
+                    respon => {
+                        console.log("respon:", respon.data);
+                        alert("foto berhasil diubah")
+                    }
+                )
+            }
+        )
+    }
+
+    async updateDataProfil(){
+        const dataUpdateProfil = {
+            nama: this.state.nama,
+            usia: this.state.usia,
+            alamat: this.state.alamat,
+            hobi: this.state.hobi,
+            tentang: this.state.tentang
+        }
+        await AsyncStorage.getItem('emailKey')
+        .then(
+            res => {
+                axios.put(`http://10.0.2.2:4000/users/${res}`, dataUpdateProfil)
+                .then(
+                    result => {
+                        console.log(`result`, result.data)
+                        alert("Informasi Akun Berhasil Diubah")
+                    }
+                )
+            }
+        )
+    }
+
+    async getDataImage(){
+        await AsyncStorage.getItem('emailKey')
+        .then(
+            res => {
+                axios.get(`http://10.0.2.2:4000/users/${res}`)
+                .then(
+                    result => {
+                        console.log(`result`, result.data.image)
+                        this.setState({photo: result.data.image})
+                        this.setState({nama: result.data.nama})
+                        this.setState({usia: result.data.usia})
+                        this.setState({alamat: result.data.alamat})
+                        this.setState({hobi: result.data.hobi})
+                        this.setState({tentang: result.data.tentang})
+                    }
+                )
+            }
+        )
+    }
+
+    componentDidMount(){
+        this.getDataImage()
     }
 
     onLogout = async() => {
@@ -27,9 +132,16 @@ export default class Account extends Component{
             <ScrollView>
                 <View style={{alignItems:'center', justifyContent:'center', paddingTop:normalize(20)}}>
                     <View style={styles.imageContainer}>
-
+                        {
+                            (
+                                <Image
+                                source={{uri:`http://192.168.56.1:4000/resources/upload/${this.state.photo}`}}
+                                style={styles.imageStyle}
+                                />
+                            )
+                        }
                     </View>
-                    <TouchableOpacity style={styles.border}>
+                    <TouchableOpacity onPress={() => {this.selectImage()}} style={styles.border}>
                         <Icon  type={'FontAwesome'} name="camera" style={styles.iconStyle} />
                     </TouchableOpacity>
 
@@ -38,7 +150,8 @@ export default class Account extends Component{
                         <View>
                             <TextInput
                                 underlineColorAndroid="#fff"
-                                placeholder="Nama Lengkap"
+                                value={this.state.nama}
+                                onChangeText={(text) => this.setState({nama: text})}
                                 placeholderTextColor="#fff"
                                 style={{width:normalize(250), color:'#fff'}}
                                 maxLength={25}
@@ -46,53 +159,120 @@ export default class Account extends Component{
                         </View>
 
                         <View>
-                            <TextInput
-                                underlineColorAndroid="#fff"
-                                placeholder="Usia"
-                                placeholderTextColor="#fff"
-                                style={{width:normalize(250), color:'#fff'}}
-                                keyboardType="number-pad"
-                                maxLength={2}
-                            />
+                            {
+                                this.state.usia ? (
+                                <TextInput
+                                    underlineColorAndroid="#fff"
+                                    value={this.state.usia.toString()}
+                                    onChangeText={(text) => this.setState({usia: text})}
+                                    placeholderTextColor="#fff"
+                                    style={{width:normalize(250), color:'#fff'}}
+                                    keyboardType="number-pad"
+                                    maxLength={this.state.usia !== null ? 2 : 4}
+                                />
+                                ) : (
+                                <TextInput
+                                    underlineColorAndroid="#fff"
+                                    placeholder="Usia :"
+                                    value={this.state.usia}
+                                    onChangeText={(text) => this.setState({usia: text})}
+                                    placeholderTextColor="#fff"
+                                    style={{width:normalize(250), color:'#fff'}}
+                                    keyboardType="number-pad"
+                                    maxLength={this.state.usia !== null ? 2 : 4}
+                                />
+                                )
+                            }
+                            
                         </View>
 
                         <View>
-                            <TextInput
-                                underlineColorAndroid="#fff"
-                                placeholder="Alamat"
-                                placeholderTextColor="#fff"
-                                style={{width:normalize(250), color:'#fff'}}
-                                maxLength={20}
-                            />
+                            {
+                                this.state.alamat ? (
+                                <TextInput
+                                    underlineColorAndroid="#fff"
+                                    value={this.state.alamat}
+                                    onChangeText={(text) => this.setState({alamat: text})}
+                                    placeholderTextColor="#fff"
+                                    style={{width:normalize(250), color:'#fff'}}
+                                    maxLength={20}
+                                />
+                                ) : (
+                                <TextInput
+                                    underlineColorAndroid="#fff"
+                                    placeholder="Alamat :"
+                                    value={this.state.alamat}
+                                    onChangeText={(text) => this.setState({alamat: text})}
+                                    placeholderTextColor="#fff"
+                                    style={{width:normalize(250), color:'#fff'}}
+                                    maxLength={20}
+                                />          
+                                )
+                            }
+                            
                         </View>
 
                         <View>
-                            <TextInput
-                                underlineColorAndroid="#fff"
-                                placeholder="Hobi :"
-                                placeholderTextColor="#fff"
-                                style={{width:normalize(250), color:'#fff'}}
-                                maxLength={100}
-                                numberOfLines={5}
-                                multiline
-                            />
+                            {
+                                this.state.hobi ? (
+                                <TextInput
+                                    underlineColorAndroid="#fff"
+                                    value={this.state.hobi}
+                                    onChangeText={(text) => this.setState({hobi: text})}
+                                    placeholderTextColor="#fff"
+                                    style={{width:normalize(250), color:'#fff'}}
+                                    maxLength={100}
+                                    numberOfLines={5}
+                                    multiline
+                                />
+                                ) : (
+                                <TextInput
+                                    underlineColorAndroid="#fff"
+                                    placeholder="Hobi :"
+                                    value={this.state.hobi}
+                                    onChangeText={(text) => this.setState({hobi: text})}
+                                    placeholderTextColor="#fff"
+                                    style={{width:normalize(250), color:'#fff'}}
+                                    maxLength={100}
+                                    numberOfLines={5}
+                                    multiline
+                                />
+                                )
+                            }
                         </View>
 
                         <View>
-                            <TextInput
-                                underlineColorAndroid="#fff"
-                                placeholder="Tentangku :"
-                                placeholderTextColor="#fff"
-                                style={{width:normalize(250), color:'#fff'}}
-                                numberOfLines={5}
-                                maxLength={100}
-                                multiline
-                            />
+                            {
+                                this.state.tentang ? (
+                                <TextInput
+                                    underlineColorAndroid="#fff"
+                                    value={this.state.tentang}
+                                    onChangeText={(text) => this.setState({tentang: text})}
+                                    placeholderTextColor="#fff"
+                                    style={{width:normalize(250), color:'#fff'}}
+                                    numberOfLines={5}
+                                    maxLength={100}
+                                    multiline
+                                />
+                                ) : (
+                                <TextInput
+                                    underlineColorAndroid="#fff"
+                                    placeholder="Tentangku :"
+                                    value={this.state.tentang}
+                                    onChangeText={(text) => this.setState({tentang: text})}
+                                    placeholderTextColor="#fff"
+                                    style={{width:normalize(250), color:'#fff'}}
+                                    numberOfLines={5}
+                                    maxLength={100}
+                                    multiline
+                                />
+                                )
+                            }
                         </View>
                     </View>
 
                     <View style={{paddingBottom:normalize(20)}}>
-                        <Button full style={styles.buttonStyle}>
+                        <Button onPress={() => this.updateDataProfil()} full style={styles.buttonStyle}>
                             <Text style={styles.fontCaption}>Simpan</Text>
                         </Button>
                         <View style={{paddingTop:normalize(20)}}>
@@ -132,7 +312,7 @@ export default class Account extends Component{
 
                         {/* Footer Kegiatan */}
                         <View style={{padding:normalize(10), paddingLeft:normalize(10)}}>
-                            <TouchableOpacity style={{alignItems:'center', justifyContent:'center'}}>
+                            <TouchableOpacity onPress={() => this.props.navigation.push('Kegiatan')} style={{alignItems:'center', justifyContent:'center'}}>
                                 <Icon type={'FontAwesome5'} name="calendar-alt" style={styles.iconFooter} />
                                 <Text style={styles.fontFooter}>Kegiatan</Text>
                             </TouchableOpacity>
@@ -144,7 +324,7 @@ export default class Account extends Component{
 
                         {/* Footer Akun */}
                         <View style={{padding:normalize(13), paddingLeft:normalize(15)}}>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('Account')} style={{alignItems:'center', justifyContent:'center'}}>
+                            <TouchableOpacity onPress={() => this.props.navigation.push('Account')} style={{alignItems:'center', justifyContent:'center'}}>
                                 <Icon type={'FontAwesome'} name="user-circle" style={styles.iconFooterActive} />
                                 <Text style={styles.fontFooter}>Akun</Text>
                             </TouchableOpacity>
@@ -193,8 +373,9 @@ const styles = StyleSheet.create({
         padding:normalize(10)
     },
     imageStyle:{
-        width:normalize(340),
-        height:normalize(300),
+        width:normalize(150),
+        height:normalize(150),
+        borderRadius:75,
     },
     imageContainer:{
         width:normalize(150),
