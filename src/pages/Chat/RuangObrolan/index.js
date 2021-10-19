@@ -1,6 +1,6 @@
-import { Icon } from "native-base";
+import { Icon, Right } from "native-base";
 import React, {Component} from "react";
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from "react-native";
 import normalize from "react-native-normalize";
 import { logo } from "../../../assets";
 
@@ -15,8 +15,37 @@ export default class RuangObrolan extends Component{
 
     renderEmptyChat(){
         return(
-            <View>
-                <Image source={{uri:this.state.images[0]}} style={styles.imageStyle} />
+            <View style={{alignItems:'center', justifyContent:'center', paddingTop:normalize(20)}}>
+                <Image source={{uri:this.state.images}} style={styles.imageStyle} />
+                <Text style={styles.fontCaption}>
+                    Kamu Hari Ini Belum Mengobrol {"\n"}
+                    Dengan Siapapun. {"\n"}
+                </Text>
+            </View>
+        )
+    }
+
+    renderAvailableChat(){
+        return(
+            <View style={{paddingTop:normalize(20)}}>
+                <View style={styles.border}>
+                    <View style={{flexDirection:'row', padding:normalize(10)}}>
+                        <TouchableOpacity style={styles.imageContainer}>
+
+                        </TouchableOpacity>
+                        <View style={styles.onlineCircle}/>
+
+                        <View style={{paddingLeft:normalize(20)}}>
+                            <Text style={styles.fontName}>Nanda Pratiwi</Text>
+                            <Text style={styles.fontText}>Waalaikumsalam</Text>
+                        </View>
+
+                        <Right/>
+                        <View style={styles.availChatCircle}>
+                            <Text style={{color:'white'}}>1</Text>
+                        </View>
+                    </View>
+                </View>
             </View>
         )
     }
@@ -29,13 +58,9 @@ export default class RuangObrolan extends Component{
                     <Icon type={'FontAwesome5'} name="comments" style={styles.iconHeader} />
                 </View>
                 <ScrollView>
-                    <View style={{alignItems:'center', justifyContent:'center', paddingTop:normalize(20)}}>
-                        <Image source={{uri:this.state.images}} style={styles.imageStyle} />
-                        <Text style={styles.fontCaption}>
-                            Kamu Hari Ini Belum Mengobrol {"\n"}
-                            Dengan Siapapun. {"\n"}
-                        </Text>
-                    </View>
+                    {
+                        this.renderAvailableChat()
+                    }
                 </ScrollView>
                 {/* Ini Footer */}
                 <View style={{alignItems:'center', justifyContent:'center'}}>
@@ -77,8 +102,8 @@ export default class RuangObrolan extends Component{
                         </View>
 
                         {/* Footer Akun */}
-                        <View style={{padding:normalize(10), paddingLeft:normalize(10)}}>
-                            <TouchableOpacity style={{alignItems:'center', justifyContent:'center'}}>
+                        <View style={{padding:normalize(13), paddingLeft:normalize(15)}}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('Account')} style={{alignItems:'center', justifyContent:'center'}}>
                                 <Icon type={'FontAwesome'} name="user-circle" style={styles.iconFooter} />
                                 <Text style={styles.fontFooter}>Akun</Text>
                             </TouchableOpacity>
@@ -107,19 +132,45 @@ const styles = StyleSheet.create({
         justifyContent:'center'
     },
     border:{
-        backgroundColor:'white',
-        width:normalize(150),
-        height:normalize(180),
-        borderBottomRightRadius:20,
-        borderBottomLeftRadius:20
+        backgroundColor:'#fff',
+        width:'100%',
+        height:normalize(70),
     },
     imageStyle:{
         width:normalize(340),
         height:normalize(300),
     },
+    imageContainer:{
+        width:normalize(50),
+        height:normalize(50),
+        borderRadius:25,
+        backgroundColor:'#31A5F9'
+    },
+    onlineCircle:{
+        width:normalize(15),
+        height:normalize(15),
+        borderRadius:10,
+        backgroundColor:'#6ECD5E',
+        marginLeft:normalize(-10)
+    },
+    offlineCircle:{
+        width:normalize(15),
+        height:normalize(15),
+        borderRadius:10,
+        backgroundColor:'#C74141',
+        marginLeft:normalize(-10)
+    },
+    availChatCircle:{
+        width:normalize(30),
+        height:normalize(30),
+        borderRadius:15,
+        backgroundColor:'#6ECD5E',
+        alignItems:'center',
+        justifyContent:'center'
+    },
     footer:{
         width:normalize(350),
-        height:normalize(70),
+        height:normalize(80),
         backgroundColor:'#31A5F9',
         marginBottom:normalize(10),
         borderRadius:30,
@@ -151,5 +202,15 @@ const styles = StyleSheet.create({
         fontFamily:'Quicksand-SemiBold',
         color:'white',
         fontSize:normalize(20)
+    },
+    fontName:{
+        fontFamily:'Quicksand-SemiBold',
+        color:'black',
+        fontSize:normalize(20)
+    },
+    fontText:{
+        fontFamily:'Quicksand-Regular',
+        color:'black',
+        fontSize:normalize(18)
     }
 })

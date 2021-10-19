@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 import { View } from "react-native";
 import BotNav from "./src/components/BotNav";
+import Account from "./src/pages/Account";
 import RuangObrolan from "./src/pages/Chat/RuangObrolan";
 import Home from "./src/pages/Home";
 import Login from "./src/pages/Login";
@@ -27,6 +28,9 @@ const App = () => {
 
         {/* Chat */}
         <Stack.Screen name="RuangObrolan" component={RuangObrolan}/>
+
+        {/* Account */}
+        <Stack.Screen name="Account" component={Account}/>
 
       </Stack.Navigator>
     </NavigationContainer>

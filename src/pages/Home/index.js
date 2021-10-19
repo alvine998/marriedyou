@@ -136,8 +136,8 @@ export default class Home extends Component{
                         </View>
 
                         {/* Footer Akun */}
-                        <View style={{padding:normalize(10), paddingLeft:normalize(10)}}>
-                            <TouchableOpacity style={{alignItems:'center', justifyContent:'center'}}>
+                        <View style={{padding:normalize(13), paddingLeft:normalize(15)}}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('Account')} style={{alignItems:'center', justifyContent:'center'}}>
                                 <Icon type={'FontAwesome'} name="user-circle" style={styles.iconFooter} />
                                 <Text style={styles.fontFooter}>Akun</Text>
                             </TouchableOpacity>
