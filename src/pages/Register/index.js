@@ -12,12 +12,19 @@ export default class Register extends Component{
             nohp:'',
             email:'',
             password:'',
+            jenis_kelamin:'Laki-laki',
+            jk1:'Laki-laki',
+            jk2:'Perempuan',
+            usia:'',
+            checked:true,
+            checked2:false,
             collection:[]
         };
         this.handleNama = this.handleNama.bind(this);
         this.handleEmail = this.handleEmail.bind(this);
         this.handleNohp = this.handleNohp.bind(this);
         this.handlePassword = this.handlePassword.bind(this);
+        this.handleUsia = this.handleUsia.bind(this);
     }
 
     handleEmail(event) {
@@ -36,6 +43,22 @@ export default class Register extends Component{
         this.setState({ password: event })
     }
 
+    handleUsia(event) {
+        this.setState({ usia: event })
+    }
+
+    handleRadio(jk){
+        this.setState({checked: true, checked2: false})
+        this.setState({jenis_kelamin: jk})
+        console.log('jenis kelamin: ', jk)
+    }
+
+    handleRadio2(jk){
+        this.setState({checked2: true, checked: false})
+        console.log('jenis kelamin: ', jk)
+        this.setState({jenis_kelamin: jk})
+    }
+
 
     handleSubmit () {
         if(!this.state.nama){
@@ -50,19 +73,27 @@ export default class Register extends Component{
         else if(!this.state.password){
             alert("Harap isi password anda")
         }
+        else if(!this.state.usia){
+            alert("Harap isi usia anda")
+        }
+        else if(this.state.usia < 17){
+            alert("Anda masih dibawah umur")
+        }
         else {
             const user = {
                 nama: this.state.nama,
                 email: this.state.email,
                 nohp: this.state.nohp,
-                password: this.state.password
+                password: this.state.password,
+                jenis_kelamin: this.state.jenis_kelamin,
+                usia: this.state.usia
             }
             console.log("hello", user)
             axios.post(`http://10.0.2.2:4000/users`, user)
                 .then(res => {
                     console.log(res.data);
                     Alert.alert("Berhasil Daftar")
-                    this.setState({nama:'', email:'', nohp:'', password:''})
+                    this.setState({nama:'', email:'', nohp:'', password:'', checked: true, checked2:false})
                     this.props.navigation.navigate("Login")
                 })
                 .catch(err => {
@@ -70,6 +101,10 @@ export default class Register extends Component{
                 });
         }
         
+    }
+
+    componentDidMount(){
+        console.log(this.state.jenis_kelamin)
     }
 
     render(){
@@ -89,15 +124,6 @@ export default class Register extends Component{
                     </Header>
                 </View>
                 <ScrollView>
-                    
-                    <View>
-                        {this.state.collection && this.state.collection.map((collections, index) => {
-                            console.log(collections);
-                            return(
-                                <Text>{collections.nama}</Text>
-                            )
-                        })}
-                    </View>
                     <View style={{alignItems:'center', justifyContent:'center', paddingTop:normalize(50)}}>
                         <View>
                             <View style={styles.square}>
@@ -105,6 +131,17 @@ export default class Register extends Component{
                                     value={this.state.nama}
                                     onChangeText={this.handleNama}
                                     placeholder="Nama"
+                                />
+                            </View>
+                            <View style={{paddingTop:normalize(10)}}/>
+
+                            <View style={styles.squareUsia}>
+                                <TextInput
+                                    value={this.state.usia}
+                                    onChangeText={this.handleUsia}
+                                    placeholder="Usia"
+                                    keyboardType="number-pad"
+                                    maxLength={2}
                                 />
                             </View>
                             <View style={{paddingTop:normalize(10)}}/>
@@ -127,7 +164,35 @@ export default class Register extends Component{
                                     maxLength={12}
                                 />
                             </View>
+                            <View style={{paddingTop:normalize(20)}}/>
+
+                            <Text style={{fontFamily:'Quicksand-SemiBold'}}>Jenis Kelamin :</Text>
                             <View style={{paddingTop:normalize(10)}}/>
+                            <View style={{flexDirection:'row'}}>
+                                <View style={{flexDirection:'row', alignItems:'center'}}>
+                                    <TouchableOpacity onPress={() => {this.handleRadio(this.state.jk1)}} style={styles.radioButton}>
+                                        {
+                                            this.state.checked == true ? (
+                                                <Icon type={"FontAwesome"} name="circle" style={styles.iconRadio}/>
+                                            ) : this.state.checked2 == true ? (<View/>) : (<View/>)
+                                        }
+                                    </TouchableOpacity>
+                                    <Text style={{fontFamily:'Quicksand-SemiBold', paddingLeft:normalize(10)}}>Laki-laki</Text>
+                                </View>
+
+                                <View style={{flexDirection:'row', alignItems:'center', paddingLeft:normalize(20)}}>
+                                    <TouchableOpacity onPress={() => {this.handleRadio2(this.state.jk2)}} style={styles.radioButton}>
+                                        {
+                                            this.state.checked2 == true ? (
+                                                <Icon type={"FontAwesome"} name="circle" style={styles.iconRadio}/>
+                                            ) : this.state.checked == true ? (<View/>) : (<View/>)
+                                        }
+                                    </TouchableOpacity>
+                                    <Text style={{fontFamily:'Quicksand-SemiBold', paddingLeft:normalize(10)}}>Perempuan</Text>
+                                </View>
+                            </View>
+
+                            <View style={{paddingTop:normalize(20)}}/>
 
                             <View style={styles.square}>
                                 <TextInput
@@ -164,4 +229,23 @@ const styles = StyleSheet.create({
         borderRadius:10,
         paddingLeft:normalize(10)
     },
+    squareUsia:{
+        width:normalize(65),
+        height:normalize(50),
+        backgroundColor:'#fff',
+        borderRadius:10,
+        paddingLeft:normalize(10)
+    },
+    radioButton:{
+        width:normalize(25),
+        height:normalize(25),
+        borderRadius:20,
+        borderWidth:1,
+        alignItems:'center',
+        justifyContent:'center'
+    },
+    iconRadio:{
+        color:'black',
+        fontSize:normalize(20)
+    }
 })

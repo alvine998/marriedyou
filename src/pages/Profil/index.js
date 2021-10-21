@@ -1,26 +1,53 @@
+import AsyncStorage from "@react-native-community/async-storage";
+import axios from "axios";
 import { Body, Header, Icon, Left } from "native-base";
 import React, {Component} from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ImageBackground, ScrollView, StyleSheet, Text, View } from "react-native";
 import normalize from "react-native-normalize";
 
 export default class Profil extends Component{
     constructor(props){
         super(props);
         this.state={
-            
+            nama:'',
+            usia:'',
+            photo:''
         }
+    }
+
+    async getDataProfil(){
+        await AsyncStorage.getItem('profilKey')
+        .then(
+            res => {
+                console.log(res)
+                axios.get(`http://10.0.2.2:4000/users/id/${res}`)
+                .then(
+                    result => {
+                        const val = result.data;
+                        this.setState({nama: val.nama, usia: val.usia, photo: val.image})
+                    }
+                )
+            }
+        )
+    }
+
+    componentDidMount(){
+        this.getDataProfil()
     }
 
     render(){
         return(
             <View style={styles.bg}>
                 <ScrollView>
-                    <View style={styles.border}>
+                    <ImageBackground source={{uri:`http://192.168.56.1:4000/resources/upload/${this.state.photo}`}} style={styles.border}>
                         <View style={styles.head}>
-                            <Icon type={'FontAwesome5'} name="chevron-left" style={styles.iconHeader} />
-                            <Text style={styles.fontHeader}>Nama, Usia</Text>
+                            <Icon onPress={() => this.props.navigation.navigate('Home')} type={'FontAwesome5'} name="chevron-left" style={styles.iconHeader} />
+                            <Text style={styles.fontHeader}>{this.state.nama}, {this.state.usia}</Text>
                         </View>
-                    </View>
+                    </ImageBackground>
+                    {/* <View style={styles.border}>
+                        
+                    </View> */}
                 </ScrollView>
             </View>
         )
@@ -40,7 +67,6 @@ const styles = StyleSheet.create({
         paddingTop:normalize(20)
     },
     border:{
-        backgroundColor:'white',
         width:'100%',
         height:normalize(400),
         borderBottomRightRadius:50,

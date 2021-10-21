@@ -101,7 +101,7 @@ export default class Account extends Component{
                 .then(
                     result => {
                         console.log(`result`, result.data.image)
-                        this.setState({photo: result.data.image})
+                        this.setState({photo: result.data.image, oldPhoto: result.data.image})
                         this.setState({nama: result.data.nama})
                         this.setState({usia: result.data.usia})
                         this.setState({alamat: result.data.alamat})
@@ -133,9 +133,10 @@ export default class Account extends Component{
                 <View style={{alignItems:'center', justifyContent:'center', paddingTop:normalize(20)}}>
                     <View style={styles.imageContainer}>
                         {
+                            (this.state.photo !== '' || this.state.oldPhoto !== '') &&
                             (
                                 <Image
-                                source={{uri:`http://192.168.56.1:4000/resources/upload/${this.state.photo}`}}
+                                source={{uri: this.state.oldPhoto !== this.state.photo ? this.state.photo : `http://192.168.56.1:4000/resources/upload/${this.state.oldPhoto}`}}
                                 style={styles.imageStyle}
                                 />
                             )

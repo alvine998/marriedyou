@@ -1,8 +1,10 @@
+import AsyncStorage from "@react-native-community/async-storage";
+import axios from "axios";
 import { Icon } from "native-base";
 import React,{Component} from "react";
 import { Animated, BackHandler, Image, ScrollView, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
 import normalize from "react-native-normalize";
-import { logo } from "../../assets";
+import { akhwat, ikhwan, logo } from "../../assets";
 
 
 
@@ -10,10 +12,59 @@ export default class Home extends Component{
     constructor(props){
         super(props);
         this.state={
-            backClickCount:0
+            backClickCount:0,
+            collection:[],
+            jenis_kelamin:''
         }
         this.springValue = new Animated.Value(100);
         this.handleExit = this.handleExit.bind(this)
+    }
+
+    async getDataPerson(){
+        await AsyncStorage.getItem('emailKey')
+        .then(
+            result => {
+                console.log("email:" , result)
+
+                axios.get(`http://10.0.2.2:4000/users/${result}`)
+                .then(
+                    res => {
+                        const val = res.data;
+                        console.log(val)
+                        this.setState({jenis_kelamin: val.jenis_kelamin})
+
+                        console.log(this.state.jenis_kelamin)
+                        if(this.state.jenis_kelamin == 'Laki-laki'){
+                            this.getDataWoman();
+                        } else {
+                            this.getDataMan();
+                        }
+                    }
+                )
+            }
+        )
+    }
+
+    getDataMan(){
+        axios.get(`http://10.0.2.2:4000/users/gender/laki-laki`)
+        .then(
+            res => {
+                const val = res.data;
+                console.log(val)
+                this.setState({collection: val})
+            }
+        )
+    }
+
+    getDataWoman(){
+        axios.get(`http://10.0.2.2:4000/users/gender/perempuan`)
+        .then(
+            res => {
+                const val = res.data;
+                console.log(val)
+                this.setState({collection: val})
+            }
+        )
     }
 
     _spring(){
@@ -58,41 +109,93 @@ export default class Home extends Component{
 
     componentDidMount(){
         BackHandler.addEventListener("hardwareBackPress", this.handleExit)
+        this.getDataPerson();
+        this.getDataMan();
+        this.getDataWoman();
     }
 
     componentWillUnmount(){
         BackHandler.removeEventListener("hardwareBackPress", this.handleExit)
     }
 
+    async setDataId(id){
+        await AsyncStorage.setItem('profilKey', id)
+    }
+
     render(){
+        
         return(
             <View style={styles.bg}>
                 <ScrollView>
                     <View style={styles.head}>
                         <Image source={logo} style={styles.imageStyle} />
                     </View>
-                    <View>
-                        <View style={{flexDirection:'row', padding:normalize(30)}}>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('Profil')}>
-                                <View style={styles.border}>
+                    <View style={{flexDirection:'row'}}>
+                        <View style={styles.borderPosition1}>
+                            {
+                                this.state.collection.sort(() => Math.random() - Math.random()).find(() => true) && this.state.collection.map((value, key) => {
+                                    return (
+                                        <View key={key} style={{paddingTop:normalize(20), flexDirection:'row'}}>
+                                            <TouchableOpacity onPress={() => {this.props.navigation.navigate('Profil'), this.setDataId(value._id)}}>
+                                                <View style={styles.border}>
+                                                    {
+                                                        value.jenis_kelamin == 'Laki-laki' ?
+                                                        value.image == '' ? 
+                                                        (<Image source={ikhwan} style={styles.imagePerson} />): 
+                                                        (<Image source={{uri: `http://192.168.56.1:4000/resources/upload/${value.image}`}} style={styles.imagePerson} />)
+                                                        :
+                                                        value.image == ''? 
+                                                        (<Image source={akhwat} style={styles.imagePerson} />): 
+                                                        (<Image source={{uri: `http://192.168.56.1:4000/resources/upload/${value.image}`}} style={styles.imagePerson} />)
+                                                    }
+                                                    <View style={{alignItems:'center', justifyContent:'center'}}>
+                                                        <Text style={styles.fontPerson}>{value.nama.substr(0,9)}, {value.usia}</Text>
+                                                    </View>
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )
+                                })
+                            }
+                        </View>
 
-                                </View>
-                            </TouchableOpacity>
+                        <View style={styles.borderPosition}>
+                            {
+                                this.state.collection.sort(() => Math.random() - Math.random()).find(() => true) && this.state.collection.map((value, key) => {
+                                    return (
+                                        <View key={key} style={{paddingTop:normalize(20), flexDirection:'row'}}>
+                                            <TouchableOpacity onPress={() => this.props.navigation.navigate('Profil')}>
+                                                <View style={styles.border}>
+                                                    {
+                                                        value.jenis_kelamin == 'Laki-laki' ?
+                                                        value.image == '' ? 
+                                                        (<Image source={ikhwan} style={styles.imagePerson} />): 
+                                                        (<Image source={{uri: `http://192.168.56.1:4000/resources/upload/${value.image}`}} style={styles.imagePerson} />)
+                                                        :
+                                                        value.image == ''? 
+                                                        (<Image source={akhwat} style={styles.imagePerson} />): 
+                                                        (<Image source={{uri: `http://192.168.56.1:4000/resources/upload/${value.image}`}} style={styles.imagePerson} />)
+                                                    }
+                                                    <View style={{alignItems:'center', justifyContent:'center'}}>
+                                                        <Text style={styles.fontPerson}>{value.nama.substr(0,9)}, {value.usia}</Text>
+                                                    </View>
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )
+                                })
+                            }
+                        </View>
+
+                        {/* <View style={{flexDirection:'row', paddingLeft:normalize(30), paddingTop:normalize(0)}}>
+                            <View style={styles.border}>
+
+                            </View>
                             <View style={{paddingLeft:normalize(20)}} />
                             <View style={styles.border}>
 
                             </View>
-                        </View>
-
-                        <View style={{flexDirection:'row', paddingLeft:normalize(30), paddingTop:normalize(0)}}>
-                            <View style={styles.border}>
-
-                            </View>
-                            <View style={{paddingLeft:normalize(20)}} />
-                            <View style={styles.border}>
-
-                            </View>
-                        </View>
+                        </View> */}
                     </View>
                 </ScrollView>
 
@@ -155,6 +258,19 @@ const styles = StyleSheet.create({
         height:'100%',
         flex:1
     },
+    borderPosition1:{
+        flexWrap:'wrap',
+        paddingRight:normalize(10), 
+        paddingTop:normalize(30), 
+        paddingBottom:normalize(30),
+        paddingLeft:normalize(37)
+    },
+    borderPosition:{
+        flexWrap:'wrap',
+        paddingRight:normalize(30), 
+        paddingTop:normalize(30), 
+        paddingBottom:normalize(30)
+    },
     head:{
         backgroundColor:'#64B8F5',
         width:'100%',
@@ -173,6 +289,10 @@ const styles = StyleSheet.create({
     imageStyle:{
         width:normalize(133),
         height:normalize(136)
+    },
+    imagePerson:{
+        width:normalize(150),
+        height:normalize(150)
     },
     footer:{
         width:normalize(350),
@@ -193,5 +313,9 @@ const styles = StyleSheet.create({
     fontFooter:{
         fontFamily:'Quicksand-Regular',
         color:'white'
+    },
+    fontPerson:{
+        fontFamily:'Quicksand-SemiBold',
+        color:'red'
     }
 })

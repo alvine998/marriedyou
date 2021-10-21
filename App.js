@@ -5,6 +5,7 @@ import { View } from "react-native";
 import BotNav from "./src/components/BotNav";
 import Account from "./src/pages/Account";
 import Kegiatan from "./src/pages/Agenda/Kegiatan";
+import Obrolan from "./src/pages/Chat/Obrolan";
 import RuangObrolan from "./src/pages/Chat/RuangObrolan";
 import Home from "./src/pages/Home";
 import Login from "./src/pages/Login";
@@ -29,6 +30,7 @@ const App = () => {
 
         {/* Chat */}
         <Stack.Screen name="RuangObrolan" component={RuangObrolan}/>
+        <Stack.Screen name="Obrolan" component={Obrolan}/>
 
         {/* Account */}
         <Stack.Screen name="Account" component={Account}/>

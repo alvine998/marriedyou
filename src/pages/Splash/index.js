@@ -11,8 +11,13 @@ export default class Splash extends Component{
         this.state={
             valMail:'',
             login: false,
-            values:''
+            values:'',
+            status:'online'
         }
+    }
+
+    async setStatus(){
+        await AsyncStorage.setItem('statusKey', this.state.status)
     }
 
     getDataItem = async() => {
@@ -30,6 +35,8 @@ export default class Splash extends Component{
                     this.setState({login: true});
                     setTimeout(() => {
                         this.props.navigation.dispatch(StackActions.replace('Home'))
+                        console.log(this.state.status);
+                        this.setStatus();
                     }, 1500)
                 }
             }
