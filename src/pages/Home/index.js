@@ -126,10 +126,10 @@ export default class Home extends Component{
         
         return(
             <View style={styles.bg}>
-                <ScrollView>
                     <View style={styles.head}>
                         <Image source={logo} style={styles.imageStyle} />
                     </View>
+                    <ScrollView>
                     <View style={{flexDirection:'row'}}>
                         <View style={styles.borderPosition1}>
                             {
