@@ -80,7 +80,7 @@ export default class Profil extends Component{
                         :
                         this.state.photo == ''? 
                         (
-                            <ImageBackground source={ikhwan} style={styles.border}>
+                            <ImageBackground source={akhwat} style={styles.border}>
                                 <View style={styles.head}>
                                     <Icon onPress={() => this.props.navigation.navigate('Home')} type={'FontAwesome5'} name="chevron-left" style={styles.iconHeader} />
                                     <Text style={styles.fontHeader}>{this.state.nama}, {this.state.usia}</Text>
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
         fontSize:normalize(24)
     },
     iconHeader:{
-        color:'black',
+        color:'white',
         fontSize:normalize(40),
         paddingLeft:normalize(30),
         paddingRight:normalize(30)

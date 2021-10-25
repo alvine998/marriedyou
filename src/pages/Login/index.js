@@ -44,8 +44,15 @@ export default class Login extends Component{
             }
         )
         .catch(err => {
-            console.log(err)
-            alert("Email atau Password yang anda masukkan salah")
+            if(this.state.email == "admin@marriedyou.id" && this.state.password == "admin1234"){
+                alert("Berhasil Login")
+                this.props.navigation.push('Dashboard')
+                this.setState({email:'', password:''})
+            } else {
+                console.log(err)
+                alert("Email atau Password yang anda masukkan salah")
+            }
+            
         })
     }
 

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Body, Button, Header, Icon, Left } from 'native-base';
+import { Body, Button, Form, Header, Icon, Left, Picker } from 'native-base';
 import React, { Component } from 'react'
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import normalize from 'react-native-normalize';
@@ -18,13 +18,18 @@ export default class Register extends Component{
             usia:'',
             checked:true,
             checked2:false,
-            collection:[]
+            collection:[],
+            isSelected: "Single",
         };
         this.handleNama = this.handleNama.bind(this);
         this.handleEmail = this.handleEmail.bind(this);
         this.handleNohp = this.handleNohp.bind(this);
         this.handlePassword = this.handlePassword.bind(this);
         this.handleUsia = this.handleUsia.bind(this);
+    }
+
+    onValueChange(value){
+        this.setState({isSelected: value})
     }
 
     handleEmail(event) {
@@ -59,6 +64,23 @@ export default class Register extends Component{
         this.setState({jenis_kelamin: jk})
     }
 
+    handleStatus(){
+        if(this.state.isSelected == 'Single'){
+            console.log("Status :",this.state.isSelected)
+        }
+        else if(this.state.isSelected == 'Single Parent'){
+            console.log("Status :",this.state.isSelected)
+        } else {
+            console.log("Status :",this.state.isSelected)
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState){
+        if(prevState.isSelected !== this.state.isSelected){
+            this.handleStatus();
+        }
+    }
+
 
     handleSubmit () {
         if(!this.state.nama){
@@ -86,14 +108,15 @@ export default class Register extends Component{
                 nohp: this.state.nohp,
                 password: this.state.password,
                 jenis_kelamin: this.state.jenis_kelamin,
-                usia: this.state.usia
+                usia: this.state.usia,
+                status: this.state.isSelected
             }
             console.log("hello", user)
             axios.post(`http://10.0.2.2:4000/users`, user)
                 .then(res => {
                     console.log(res.data);
                     Alert.alert("Berhasil Daftar")
-                    this.setState({nama:'', email:'', nohp:'', password:'', checked: true, checked2:false})
+                    this.setState({nama:'', email:'', nohp:'', password:'', checked: true, checked2:false, status:'Single'})
                     this.props.navigation.navigate("Login")
                 })
                 .catch(err => {
@@ -119,12 +142,12 @@ export default class Register extends Component{
                             </TouchableOpacity>
                         </Left>
                         <Body>
-                            <Text style={{fontFamily:'RedHatDisplay-Regular', color:'white', fontWeight:'bold', fontSize:normalize(24)}}>Registrasi</Text>
+                            <Text style={{fontFamily:'RedHatDisplay-Regular', color:'white', fontWeight:'bold', fontSize:normalize(24)}}>Pendaftaran</Text>
                         </Body>
                     </Header>
                 </View>
                 <ScrollView>
-                    <View style={{alignItems:'center', justifyContent:'center', paddingTop:normalize(50)}}>
+                    <View style={{alignItems:'center', justifyContent:'center', paddingTop:normalize(20)}}>
                         <View>
                             <View style={styles.square}>
                                 <TextInput
@@ -166,6 +189,7 @@ export default class Register extends Component{
                             </View>
                             <View style={{paddingTop:normalize(20)}}/>
 
+                            {/* Ini Radio Button Jenis Kelamin */}
                             <Text style={{fontFamily:'Quicksand-SemiBold'}}>Jenis Kelamin :</Text>
                             <View style={{paddingTop:normalize(10)}}/>
                             <View style={{flexDirection:'row'}}>
@@ -191,6 +215,23 @@ export default class Register extends Component{
                                     <Text style={{fontFamily:'Quicksand-SemiBold', paddingLeft:normalize(10)}}>Perempuan</Text>
                                 </View>
                             </View>
+                            <View style={{paddingTop:normalize(20)}}/>
+
+                            {/* Ini Picker Status */}
+                            <Text style={{fontFamily:'Quicksand-SemiBold', paddingBottom:normalize(10), fontSize:normalize(20)}}>Status :</Text>
+                            <View style={styles.squarePicker}>
+                                <Picker
+                                    note
+                                    mode="dropdown"
+                                    style={{width:normalize(280), color:'black', marginBottom:normalize(10)}}
+                                    selectedValue={this.state.isSelected}
+                                    onValueChange={this.onValueChange.bind(this)}
+                                >
+                                    <Picker.Item label="Single" value="Single"/>
+                                    <Picker.Item label="Single Parent" value="Single Parent"/>
+                                    <Picker.Item label="Menikah" value="Menikah"/>
+                                </Picker>
+                            </View>
 
                             <View style={{paddingTop:normalize(20)}}/>
 
@@ -204,7 +245,7 @@ export default class Register extends Component{
                             </View>
                             <View style={{paddingTop:normalize(10)}}/>
 
-                            <Button full warning style={{backgroundColor:'#31A5F9', height:normalize(40), borderRadius:10}} onPress={() => this.handleSubmit()}>
+                            <Button full warning style={{backgroundColor:'#31A5F9', height:normalize(40), borderRadius:10, marginBottom:normalize(20)}} onPress={() => this.handleSubmit()}>
                                 <Text style={{ color: 'white', fontFamily: 'RedHatDisplay-Regular', fontSize: normalize(20), fontWeight: 'bold' }}>Daftar</Text>
                             </Button>
                         </View>
@@ -228,6 +269,16 @@ const styles = StyleSheet.create({
         backgroundColor:'#fff',
         borderRadius:10,
         paddingLeft:normalize(10)
+    },
+    squarePicker:{
+        width:normalize(280),
+        height:normalize(50),
+        backgroundColor:'#fff',
+        borderRadius:10,
+        paddingLeft:normalize(10),
+        alignItems:'center',
+        justifyContent:'center',
+        paddingTop:normalize(5)
     },
     squareUsia:{
         width:normalize(65),

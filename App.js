@@ -4,6 +4,9 @@ import React from "react";
 import { View } from "react-native";
 import BotNav from "./src/components/BotNav";
 import Account from "./src/pages/Account";
+import Dashboard from "./src/pages/Admin/Dashboard";
+import DataUser from "./src/pages/Admin/DataUser";
+import ListChat from "./src/pages/Admin/ListChat";
 import Kegiatan from "./src/pages/Agenda/Kegiatan";
 import Obrolan from "./src/pages/Chat/Obrolan";
 import RuangObrolan from "./src/pages/Chat/RuangObrolan";
@@ -37,6 +40,15 @@ const App = () => {
 
         {/* Kegiatan */}
         <Stack.Screen name="Kegiatan" component={Kegiatan}/>
+
+        {/* Admin Dashboard */}
+        <Stack.Screen name="Dashboard" component={Dashboard}/>
+        {/* Admin Data User */}
+        <Stack.Screen name="DataUser" component={DataUser}/>
+        {/* Admin Balas Pesan */}
+        <Stack.Screen name="ListChat" component={ListChat}/>
+
+
 
       </Stack.Navigator>
     </NavigationContainer>
