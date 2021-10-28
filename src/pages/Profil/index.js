@@ -16,7 +16,8 @@ export default class Profil extends Component{
             hobi:'',
             tentang:'',
             status:'',
-            jenis_kelamin:''
+            jenis_kelamin:'',
+            id:''
         }
     }
 
@@ -35,7 +36,8 @@ export default class Profil extends Component{
                             photo: val.image,
                             hobi: val.hobi,
                             tentang: val.tentang,
-                            jenis_kelamin: val.jenis_kelamin
+                            jenis_kelamin: val.jenis_kelamin,
+                            status: val.status
                         })
                         console.log(val)
                     }
@@ -44,8 +46,41 @@ export default class Profil extends Component{
         )
     }
 
+    async getDataFor(){
+        await AsyncStorage.getItem('emailKey')
+        .then(
+            res => {
+                axios.get(`http://10.0.2.2:4000/users/${res}`)
+                .then(
+                    respon => {
+                        const id = respon.data._id
+                        console.log("id : ", id)
+                        this.setState({id})
+                    }
+                )
+            }
+        )
+    }
+
+    onMulai(){
+        const data = {
+            msg: '',
+            msg2: '',
+            userid: this.state.id
+        }
+        console.log(data)
+        axios.post(`http://10.0.2.2:4000/chats`, data)
+        .then(
+            res => {
+                console.log(res.data)
+                this.props.navigation.navigate('Obrolan')
+            }
+        )
+    }
+
     componentDidMount(){
-        this.getDataProfil()
+        this.getDataProfil();
+        this.getDataFor();
     }
 
     render(){
@@ -99,19 +134,20 @@ export default class Profil extends Component{
                     <View style={{paddingTop:normalize(20),alignItems:'center', justifyContent:'center'}}>
                         <View style={{flexDirection:'row', alignItems:'center'}}>
                             <View style={styles.borderHobi}>
-                                <Text style={styles.fontFooter}>Hobi : {"\n"}{this.state.hobi}</Text>
+                                <Text style={styles.fontFooter2}>Hobi : {"\n"}{this.state.hobi}</Text>
                             </View>
                             <View style={{paddingLeft:normalize(10)}} />
                             <View>
                                 <View style={[styles.borderStatus, {alignItems:'center', justifyContent:'center'}]}>
-                                    <Text style={styles.fontFooter}>Status : Single</Text>
+                                    <Text style={styles.fontFooter}>Status : {this.state.status}</Text>
                                 </View>
                                 <View style={{paddingTop:normalize(7)}} />
-                                <TouchableOpacity style={styles.borderLove}>
+                                {/* <TouchableOpacity style={styles.borderLove}>
 
                                 </TouchableOpacity>
-                                <View style={{paddingTop:normalize(7)}} />
-                                <TouchableOpacity onPress={() => this.props.navigation.navigate('Obrolan')} style={[styles.borderMulai, {alignItems:'center', justifyContent:'center'}]}>
+                                <View style={{paddingTop:normalize(7)}} /> */}
+                                
+                                <TouchableOpacity onPress={() => {this.onMulai()}} style={[styles.borderMulai, {alignItems:'center', justifyContent:'center'}]}>
                                     {/* <Icon type={'FontAwesome5'} name="comments" style={styles.iconFooter} /> */}
                                     <Text style={styles.fontFooter}>Mulai Obrolan</Text>
                                 </TouchableOpacity>
@@ -138,7 +174,7 @@ const styles = StyleSheet.create({
     borderHobi:{
         width:normalize(176),
         height:normalize(133),
-        backgroundColor:'#A987E0',
+        backgroundColor:'#77dd77',
         padding:normalize(20),
         borderRadius:20
     },
@@ -152,7 +188,7 @@ const styles = StyleSheet.create({
     },
     borderStatus:{
         width:normalize(150),
-        height:normalize(40),
+        height:normalize(70),
         backgroundColor:'#A987E0',
         borderRadius:10
     },
@@ -209,6 +245,10 @@ const styles = StyleSheet.create({
     fontFooter:{
         fontFamily:'Quicksand-Regular',
         color:'white'
+    },
+    fontFooter2:{
+        fontFamily:'Quicksand-Regular',
+        color:'black'
     },
     fontHeader:{
         fontFamily:'Quicksand-Bold',

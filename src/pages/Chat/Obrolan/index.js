@@ -53,7 +53,7 @@ export default class Obrolan extends Component{
                     <View style={{paddingRight:normalize(10)}}>
                         <Icon onPress={() => this.props.navigation.navigate('RuangObrolan')} type={'FontAwesome5'} name="chevron-left" />
                     </View>
-                    <View style={{paddingRight:normalize(20), paddingLeft:normalize(20)}}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Profil')} style={{paddingRight:normalize(20), paddingLeft:normalize(20)}}>
                         {/* <Image style={styles.imageStyle} source={{uri: `http://192.168.56.1:4000/resources/upload/${this.state.photo}`}} /> */}
                         {
                             this.state.jenis_kelamin == 'Laki-laki' ?
@@ -65,7 +65,7 @@ export default class Obrolan extends Component{
                             (<Image source={akhwat} style={styles.imageStyle} />): 
                             (<Image source={{uri: `http://192.168.56.1:4000/resources/upload/${this.state.photo}`}} style={styles.imageStyle} />)
                         }
-                    </View>
+                    </TouchableOpacity>
                     <View style={{paddingRight:normalize(100)}}>
                     <Text style={styles.fontHeader}>{this.state.nama}, {this.state.usia}</Text>
 

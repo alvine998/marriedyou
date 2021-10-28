@@ -23,11 +23,7 @@ export default class ListChat extends Component{
                     </View>
                     <View style={{alignItems:'center',justifyContent:'center', paddingBottom:normalize(20)}}>
                         <TouchableOpacity style={styles.square}>
-                            <View style={{flexDirection:'row'}}>
-                                <Text style={styles.fontCard}>Andi </Text>
-                                <Text style={styles.fontCard}>Ke</Text>
-                                <Text style={styles.fontCard}> Mona</Text>
-                            </View>
+                            <Text style={styles.fontCard}>Room Id</Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
