@@ -21,41 +21,14 @@ export default class ListChat extends Component{
                     <View style={styles.center}>
                         <Text style={styles.fontTitle}>Balas Pesan</Text>
                     </View>
-                    <View style={{alignItems:'center', flexDirection:'row', justifyContent:'center', paddingBottom:normalize(20)}}>
-                        <View style={{flexWrap:'wrap'}}>
-                                <TouchableOpacity style={styles.square}>
-                                    <View style={{alignItems:'center', paddingTop:normalize(40)}}>
-                                        <Icon type={"FontAwesome5"} name="address-card" style={{fontSize:normalize(50), color:'#62CBEC'}} />
-                                        <Text style={styles.fontCard}>Biodata</Text>
-                                    </View>
-                                </TouchableOpacity>
-
-                            <View style={{paddingTop:normalize(20)}} />
-                            <TouchableOpacity style={styles.square}>
-                                <View style={{alignItems:'center', paddingTop:normalize(40)}}>
-                                    <Icon type={"FontAwesome5"} name="user-slash" style={{fontSize:normalize(50), color:'#62CBEC'}} />
-                                    <Text style={styles.fontCard}>Block User</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={{paddingLeft:normalize(20)}} />
-                        <View style={{flexWrap:'wrap'}}>
-                            <View style={styles.square}>
-                                <View style={{alignItems:'center', paddingTop:normalize(20)}}>
-                                    <Icon type={"FontAwesome5"} name="users" style={{fontSize:normalize(50), color:'#62CBEC'}} />
-                                    <Text style={styles.fontCard}>Total User</Text>
-                                    <Text style={styles.fontCard}>20</Text>
-                                </View>
+                    <View style={{alignItems:'center',justifyContent:'center', paddingBottom:normalize(20)}}>
+                        <TouchableOpacity style={styles.square}>
+                            <View style={{flexDirection:'row'}}>
+                                <Text style={styles.fontCard}>Andi </Text>
+                                <Text style={styles.fontCard}>Ke</Text>
+                                <Text style={styles.fontCard}> Mona</Text>
                             </View>
-                            <View style={{paddingTop:normalize(20)}} />
-
-                            {/* <TouchableOpacity style={styles.square}>
-                                <View style={{alignItems:'center', paddingTop:normalize(30)}}>
-                                    <Icon type={"FontAwesome5"} name="question-circle" style={{fontSize:normalize(50), color:'#62CBEC'}} />
-                                    <Text style={styles.fontCard}>Laporkan Masalah</Text>
-                                </View>
-                            </TouchableOpacity> */}
-                        </View>
+                        </TouchableOpacity>
                     </View>
                 </ScrollView>
                 <Button full warning onPress={() => this.props.navigation.navigate('Dashboard')}>
@@ -88,11 +61,12 @@ const styles = StyleSheet.create({
         height:normalize(250)
     },
     square:{
-        width:normalize(150),
-        height:normalize(150),
+        width:'100%',
+        height:normalize(50),
         backgroundColor:'#fff',
-        borderRadius:10,
-        shadowColor:'black'
+        shadowColor:'black',
+        alignItems:'center',
+        justifyContent:'center'
     },
     fontHead:{
         fontFamily:'Quicksand-Bold',

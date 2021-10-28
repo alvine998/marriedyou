@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
         alignItems:'center',
         justifyContent:'center',
         padding:normalize(50),
-        paddingTop:normalize(100)
+        paddingTop:normalize(50)
     },
     head:{
         alignItems:'center',

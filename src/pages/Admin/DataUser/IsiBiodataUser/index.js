@@ -5,7 +5,7 @@ import React, {Component} from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import normalize from "react-native-normalize";
 
-export default class DataUser extends Component{
+export default class IsiBiodataUser extends Component{
     constructor(props){
         super(props);
         this.state={
@@ -37,42 +37,11 @@ export default class DataUser extends Component{
                 </Header>
                 <ScrollView>
                     <View style={styles.center}>
-                        <Text style={styles.fontTitle}>Data User</Text>
+                        <Text style={styles.fontTitle}>Profil User</Text>
                     </View>
                     <View style={{alignItems:'center', flexDirection:'row', justifyContent:'center', paddingBottom:normalize(20)}}>
-                        <View style={{flexWrap:'wrap'}}>
-                                <TouchableOpacity onPress={() => {this.props.navigation.push('BiodataUser')}} style={styles.square}>
-                                    <View style={{alignItems:'center', paddingTop:normalize(40)}}>
-                                        <Icon type={"FontAwesome5"} name="address-card" style={{fontSize:normalize(50), color:'#62CBEC'}} />
-                                        <Text style={styles.fontCard}>Biodata</Text>
-                                    </View>
-                                </TouchableOpacity>
+                        <View style={styles.square}>
 
-                            <View style={{paddingTop:normalize(20)}} />
-                            <TouchableOpacity style={styles.square}>
-                                <View style={{alignItems:'center', paddingTop:normalize(40)}}>
-                                    <Icon type={"FontAwesome5"} name="user-slash" style={{fontSize:normalize(50), color:'#62CBEC'}} />
-                                    <Text style={styles.fontCard}>Block User</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={{paddingLeft:normalize(20)}} />
-                        <View style={{flexWrap:'wrap'}}>
-                            <View style={styles.square}>
-                                <View style={{alignItems:'center', paddingTop:normalize(20)}}>
-                                    <Icon type={"FontAwesome5"} name="users" style={{fontSize:normalize(50), color:'#62CBEC'}} />
-                                    <Text style={styles.fontCard}>Total User</Text>
-                                    <Text style={styles.fontCard}>{this.state.jumlah_user}</Text>
-                                </View>
-                            </View>
-                            <View style={{paddingTop:normalize(20)}} />
-
-                            {/* <TouchableOpacity style={styles.square}>
-                                <View style={{alignItems:'center', paddingTop:normalize(30)}}>
-                                    <Icon type={"FontAwesome5"} name="question-circle" style={{fontSize:normalize(50), color:'#62CBEC'}} />
-                                    <Text style={styles.fontCard}>Laporkan Masalah</Text>
-                                </View>
-                            </TouchableOpacity> */}
                         </View>
                     </View>
                 </ScrollView>

@@ -6,6 +6,8 @@ import BotNav from "./src/components/BotNav";
 import Account from "./src/pages/Account";
 import Dashboard from "./src/pages/Admin/Dashboard";
 import DataUser from "./src/pages/Admin/DataUser";
+import BiodataUser from "./src/pages/Admin/DataUser/BiodataUser";
+import IsiBiodataUser from "./src/pages/Admin/DataUser/IsiBiodataUser";
 import ListChat from "./src/pages/Admin/ListChat";
 import Kegiatan from "./src/pages/Agenda/Kegiatan";
 import Obrolan from "./src/pages/Chat/Obrolan";
@@ -45,6 +47,10 @@ const App = () => {
         <Stack.Screen name="Dashboard" component={Dashboard}/>
         {/* Admin Data User */}
         <Stack.Screen name="DataUser" component={DataUser}/>
+        <Stack.Screen name="BiodataUser" component={BiodataUser}/>
+        <Stack.Screen name="IsiBiodataUser" component={IsiBiodataUser}/>
+
+        {/* <Stack.Screen name="DataUser" component={DataUser}/> */}
         {/* Admin Balas Pesan */}
         <Stack.Screen name="ListChat" component={ListChat}/>
 
