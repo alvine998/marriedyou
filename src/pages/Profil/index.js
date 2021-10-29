@@ -17,7 +17,10 @@ export default class Profil extends Component{
             tentang:'',
             status:'',
             jenis_kelamin:'',
-            id:''
+            id:'',
+            id2:'',
+            id3:'',
+            id4:''
         }
     }
 
@@ -25,7 +28,8 @@ export default class Profil extends Component{
         await AsyncStorage.getItem('profilKey')
         .then(
             res => {
-                console.log(res)
+                console.log("id2 : ",res)
+                this.setState({id2: res})
                 axios.get(`http://10.0.2.2:4000/users/id/${res}`)
                 .then(
                     result => {
@@ -56,26 +60,46 @@ export default class Profil extends Component{
                         const id = respon.data._id
                         console.log("id : ", id)
                         this.setState({id})
+
+                        axios.get(`http://10.0.2.2:4000/chats/user/${id}`)
+                        .then(
+                            res => {
+                                const val = res.data;
+                                const value = val.map(e => e.userid);
+                                const value2 = val.map(e => e.targetid);
+                                console.log("id3 : ", value)
+                                console.log("id4 : ", value2)
+                                console.log("Data : ", val)
+
+                                this.setState({id3: value, id4: value2})
+                            }
+                        )
                     }
                 )
             }
         )
     }
 
-    onMulai(){
-        const data = {
-            msg: '',
-            msg2: '',
-            userid: this.state.id
-        }
-        console.log(data)
-        axios.post(`http://10.0.2.2:4000/chats`, data)
-        .then(
-            res => {
-                console.log(res.data)
-                this.props.navigation.navigate('Obrolan')
+    onMulai(id1, id2, id3, id4){
+        if(id1 == id3 && id2 == id4){
+            alert("Ga boleh")
+        } else {
+            const data = {
+                msg: '',
+                msg2: '',
+                userid: this.state.id,
+                targetid: this.state.id2
             }
-        )
+            console.log(data)
+            // axios.post(`http://10.0.2.2:4000/chats`, data)
+            // .then(
+            //     res => {
+            //         console.log(res.data)
+            //         this.props.navigation.navigate('Obrolan')
+            //     }
+            // )
+        }
+        
     }
 
     componentDidMount(){

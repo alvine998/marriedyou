@@ -11,7 +11,11 @@ export default class RuangObrolan extends Component{
         super(props);
         this.state={
             images:'https://lh3.googleusercontent.com/fife/AAWUweWtQgjE6FYkL5DwfrYrWLGVIkl5wGroiMmwfTxTACfW2eb5kdAwkMTqrLu_ZWdbOi2nRiIniWpNI7LHURaVFlJWEhSD1kN5-7osKqLwX7kTOLVi1fAgCZxqSKx1KhB40fe1dz50C95dmEYCwKyruAS87fAfIty41GmIrLNNvDOajyok6V9b7ETVYGy4zdYKMokn8yAHyDJhNFQ0rmGssSJ_5I1V0df5bd0fN4WD_hr8ZuFwnbs-hMjnzcBRwCtpNcmo5NaPYzOSzfb6Q4_hZkwKT9-fAZi8cSujTwKNsbYbz2B5h9QEOW1nZAYsrcT6a3uXGGj7jxpE7JziTPQ6T9FXaIG1NzT2_zWRl28NvuY67xa7jvWrhGd15_WxT7HDVLqBbwpmT-xF4lLz-im4qlnodCJEcR6qEmLuzEO_eAJ0tQk-xo65cJhkH1FZGeRg7UO0WXGKhdluT7mR7W3fTtGu-eS3MTmKzgYTeJMRbHS9p1-HoUMgHk2jnrrG2VuohNhbqoinYV0xZXtxCZ647b8E5NbYA8pGPso-TWFkPwtHEmk60847WojRLchX9pl3pmdtav1y6TUvH211pQrhVbyO5XY_tQB0iFOeTBHhYdewjlfsllbinI4zZhvCUGzLFeP3QJVSA_aN974Qe-o1YtPl-QpmYrFd2dFCwr5ky3uYWPRS2QE_n4P2vNI8stvysshXN7dJ6_W2uo27JyKvGnvcyUTmpbCevpw=w811-h609-ft',
-            collection:[]
+            collection:[],
+            nama:'',
+            msg:'',
+            image:'',
+            collect:[]
         }
     }
 
@@ -31,25 +35,30 @@ export default class RuangObrolan extends Component{
         return(
             <View style={{paddingTop:normalize(20)}}>
                     {
-                        this.state.collection.reverse() && this.state.collection.map((res,i) => {
-                            <TouchableOpacity key={i} style={styles.border}>
+                        this.state.collect.reverse() && this.state.collect.map((res,i) => {
+                            return (<TouchableOpacity key={i} style={styles.border}>
                                 <View style={{flexDirection:'row', padding:normalize(10)}}>
                                     <View style={styles.imageContainer}>
-                                        <Image style={styles.imageStyle2} />
+                                        {
+                                            this.state.image !== '' && (
+                                                <Image source={{uri:`http://192.168.18.18:4000/resources/upload/${this.state.image}`}} style={styles.imageStyle2} />
+                                            )
+                                        }
                                     </View>
                                     <View style={styles.onlineCircle}/>
 
                                     <View style={{paddingLeft:normalize(20)}}>
-                                        <Text style={styles.fontName}>{res.userid}</Text>
-                                        <Text style={styles.fontText}>{res.userid}</Text>
+                                        <Text style={styles.fontName}>{this.state.nama}</Text>
+                                        <Text style={styles.fontText}>{this.state.msg}</Text>
                                     </View>
 
                                     <Right/>
                                     <View style={styles.availChatCircle}>
-                                        <Text style={{color:'white'}}>1</Text>
+                                        <Text style={{color:'white'}}>{res._id}</Text>
                                     </View>
                                 </View>
                             </TouchableOpacity>
+                            )
                         })
                     }
             </View>
@@ -69,9 +78,25 @@ export default class RuangObrolan extends Component{
                         axios.get(`http://10.0.2.2:4000/chats/user/${id}`)
                         .then(
                             val => {
-                                const collection = val.data;
-                                console.log(collection)
-                                this.setState({collection})
+                                const a = val.data.map(res => res._id);
+                                const collect = val.data;
+                                console.log(collect.length)
+                                this.setState({collect})
+                                axios.get(`http://10.0.2.2:4000/chats/${a}`)
+                                .then(
+                                    resp => {
+                                        const collection = resp.data;
+                                        console.log(collection)
+
+                                        collection.users_target.map((e) => {
+                                            console.log(e.nama)
+                                            this.setState({
+                                                nama: e.nama,
+                                                image: e.image
+                                            })
+                                        })
+                                    } 
+                                )
                             }
                         )
                     }
@@ -94,7 +119,7 @@ export default class RuangObrolan extends Component{
                 </View>
                 <ScrollView>
                     {
-                        this.state.collection.length > 0 ? (
+                        this.state.collect.length > 0 ? (
                             this.renderAvailableChat() 
                         )  : this.renderEmptyChat()
                     }
