@@ -37,28 +37,30 @@ export default class RuangObrolan extends Component{
                     {
                         this.state.collect.reverse() && this.state.collect.map((res,i) => {
                             return (<TouchableOpacity key={i} style={styles.border}>
-                                <View style={{flexDirection:'row', padding:normalize(10)}}>
-                                    <View style={styles.imageContainer}>
-                                        {
-                                            this.state.image !== '' && (
-                                                <Image source={{uri:`http://192.168.18.18:4000/resources/upload/${this.state.image}`}} style={styles.imageStyle2} />
-                                            )
-                                        }
-                                    </View>
-                                    <View style={styles.onlineCircle}/>
-
-                                    <View style={{paddingLeft:normalize(20)}}>
-                                        <Text style={styles.fontName}>{this.state.nama}</Text>
-                                        <Text style={styles.fontText}>{this.state.msg}</Text>
-                                    </View>
-
-                                    <Right/>
-                                    <View style={styles.availChatCircle}>
-                                        <Text style={{color:'white'}}>{res._id}</Text>
-                                    </View>
-                                </View>
+                            {res.users_target.reverse() && res.users_target.map((el) => {
+                                   return(<View style={{flexDirection:'row', padding:normalize(10)}}>
+                                        <View style={styles.imageContainer}>
+                                            {
+                                                el.image !== '' && (
+                                                    <Image source={{uri:`http://192.168.18.18:4000/resources/upload/${el.image}`}} style={styles.imageStyle2} />
+                                                )
+                                            }
+                                        </View>
+                                        {/* <View style={styles.onlineCircle}/> */}
+    
+                                        <View style={{paddingLeft:normalize(20)}}>
+                                            <Text style={styles.fontName}>{el.nama}</Text>
+                                            <Text style={styles.fontText}>{res.msg}</Text>
+                                        </View>
+    
+                                        <Right/>
+                                        <View style={styles.availChatCircle}>
+                                            <Text style={{color:'white'}}>{res._id}</Text>
+                                        </View>
+                                    </View>)
+                            })}
                             </TouchableOpacity>
-                            )
+                            )  
                         })
                     }
             </View>
@@ -78,25 +80,15 @@ export default class RuangObrolan extends Component{
                         axios.get(`http://10.0.2.2:4000/chats/user/${id}`)
                         .then(
                             val => {
-                                const a = val.data.map(res => res._id);
                                 const collect = val.data;
-                                console.log(collect.length)
-                                this.setState({collect})
-                                axios.get(`http://10.0.2.2:4000/chats/${a}`)
-                                .then(
-                                    resp => {
-                                        const collection = resp.data;
-                                        console.log(collection)
-
-                                        collection.users_target.map((e) => {
-                                            console.log(e.nama)
-                                            this.setState({
-                                                nama: e.nama,
-                                                image: e.image
-                                            })
-                                        })
-                                    } 
-                                )
+                                collect.map(e => {
+                                    e.users_target.map(elemet => {
+                                        console.log("Hello : ", elemet.nama)
+                                        console.log("Hello : ", e.msg)
+                                    })
+                                })
+                                console.log(...collect)
+                                this.setState({collect})  
                             }
                         )
                     }
@@ -197,6 +189,8 @@ const styles = StyleSheet.create({
         backgroundColor:'#fff',
         width:'100%',
         height:normalize(70),
+        borderBottomWidth:1,
+        borderBottomColor:'#dfdfdf',
     },
     imageStyle:{
         width:normalize(340),

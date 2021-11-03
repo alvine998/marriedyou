@@ -19,8 +19,9 @@ export default class Profil extends Component{
             jenis_kelamin:'',
             id:'',
             id2:'',
-            id3:'',
-            id4:''
+            id3:[],
+            id4:'',
+            collection:[],
         }
     }
 
@@ -64,14 +65,25 @@ export default class Profil extends Component{
                         axios.get(`http://10.0.2.2:4000/chats/user/${id}`)
                         .then(
                             res => {
-                                const val = res.data;
-                                const value = val.map(e => e.userid);
-                                const value2 = val.map(e => e.targetid);
-                                console.log("id3 : ", value)
-                                console.log("id4 : ", value2)
-                                console.log("Data : ", val)
-
-                                this.setState({id3: value, id4: value2})
+                                const collection = res.data;
+                                collection.map(
+                                    e => {e.users.map(
+                                    element => {
+                                    this.setState({id3: element._id})
+                                })
+                                    e.users_target.map(
+                                    elements => {
+                                        this.setState({id4: elements._id})
+                                        console.log("id3 : ", this.state.id3)
+                                        console.log("id4 : ", this.state.id4)
+                                    })}
+                                );
+                                if(this.state.id3 == this.state.id && this.state.id2 == this.state.id4){
+                                    console.log("sukses")
+                                } else {
+                                    console.log("Gagal")
+                                }
+                                this.setState({collection})
                             }
                         )
                     }
@@ -80,25 +92,27 @@ export default class Profil extends Component{
         )
     }
 
-    onMulai(id1, id2, id3, id4){
-        if(id1 == id3 && id2 == id4){
-            alert("Ga boleh")
-        } else {
-            const data = {
-                msg: '',
-                msg2: '',
-                userid: this.state.id,
-                targetid: this.state.id2
-            }
-            console.log(data)
-            // axios.post(`http://10.0.2.2:4000/chats`, data)
-            // .then(
-            //     res => {
-            //         console.log(res.data)
-            //         this.props.navigation.navigate('Obrolan')
-            //     }
-            // )
+    onMulai(){
+        const data = {
+            msg: '',
+            msg2: '',
+            userid: this.state.id,
+            targetid: this.state.id2
         }
+        console.log(data)
+        if(this.state.id3 == this.state.id && this.state.id2 == this.state.id4){
+            alert("Langsung chat")
+            this.props.navigation.navigate('Obrolan')
+        } else {
+            axios.post(`http://10.0.2.2:4000/chats`, data)
+            .then(
+                res => {
+                    console.log(res.data)
+                    this.props.navigation.navigate('Obrolan')
+                }
+            )
+        }
+            
         
     }
 
