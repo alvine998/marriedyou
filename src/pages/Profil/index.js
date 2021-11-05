@@ -102,13 +102,13 @@ export default class Profil extends Component{
         console.log(data)
         if(this.state.id3 == this.state.id && this.state.id2 == this.state.id4){
             alert("Langsung chat")
-            this.props.navigation.navigate('Obrolan')
+            this.props.navigation.push('Obrolan')
         } else {
             axios.post(`http://10.0.2.2:4000/chats`, data)
             .then(
                 res => {
-                    console.log(res.data)
-                    this.props.navigation.navigate('Obrolan')
+                    console.log("Sukses Disimpan",res.data)
+                    this.props.navigation.push('Obrolan')
                 }
             )
         }

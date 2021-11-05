@@ -16,7 +16,14 @@ export default class Obrolan extends Component{
             photo:'',
             text:'',
             text2:'',
-            jenis_kelamin:''
+            jenis_kelamin:'',
+            id1:'',
+            id2:'',
+            kode:'',
+            kode2:'',
+            kode3:'',
+            val:[],
+            vals:[]
         }
     }
 
@@ -24,26 +31,110 @@ export default class Obrolan extends Component{
         await AsyncStorage.getItem('profilKey')
         .then(
             res => {
-                console.log(res)
-                axios.get(`http://10.0.2.2:4000/users/id/${res}`)
+                console.log("Hello",res)
+                this.setState({id1: res})
+                axios.get(`http://10.0.2.2:4000/chats/`)
+                .then(
+                    result => {
+                        const vals = result.data;
+                        console.log("Data", vals)
+                        vals.map(element => {
+                            console.log(element.targetid)
+                            if(res == element.targetid){
+                                axios.get(`http://10.0.2.2:4000/users/id/${element.targetid}`)
+                                .then(
+                                    result => {
+                                        const val = result.data;
+                                        this.setState({
+                                            nama: val.nama, 
+                                            usia: val.usia, 
+                                            photo: val.image,
+                                            jenis_kelamin: val.jenis_kelamin,
+                                            kode: val._id
+                                        })
+                                        console.log(val)
+                                    }
+                                )
+                            }
+                        })
+                    }
+                )
+                
+            }
+        )
+    }
+
+    async getChat(){
+        await AsyncStorage.getItem('chatKey')
+        .then(
+            req => JSON.parse(req)
+        )
+        .then(
+            res => {
+                console.log(res.obrolan_id)
+                this.setState({id2: res.target_id, kode2: res.obrolan_id})
+                axios.get(`http://10.0.2.2:4000/chats/${this.state.kode2}`)
                 .then(
                     result => {
                         const val = result.data;
-                        this.setState({
-                            nama: val.nama, 
-                            usia: val.usia, 
-                            photo: val.image,
-                            jenis_kelamin: val.jenis_kelamin
-                        })
-                        console.log(val)
+                        val.users_target.map(e => {
+                            this.setState({
+                                nama: e.nama, 
+                                usia: e.usia, 
+                                photo: e.image,
+                                jenis_kelamin: e.jenis_kelamin,
+                                kode3: e._id
+                            })
+                        })                        
+                        console.log("Data:",val)
                     }
                 )
+                
             }
         )
     }
 
     componentDidMount(){
+        this.getChat();
         this.getDataProfil();
+    }
+
+    // componentDidUpdate(prevProps, prevState){
+    //     if(prevState.text !== this.state.text ){
+
+    //         this.setState({text: ''})
+    //     }
+    // }
+
+    onSend(id, id2, kode, kode2){
+        const data = {
+            msg: this.state.text
+        }
+        if(this.state.text == ''){
+
+        } else {
+            // axios.put(`http://10.0.2.2:4000/chatsend/${kode !== '' ? kode : kode2}`, data)
+            // .then(
+            //     res => {
+            //         console.log(res)
+            //         this.props.navigation.push('Obrolan')
+            //     }
+            // )
+            console.log("Terkirim")
+            this.setState({text:''})
+        }
+            // console.log("find : ",kode)
+            // console.log("find : ",kode2)
+            // console.log("find : ", id2)
+
+
+    }
+
+    async deleteAsync (){
+        await AsyncStorage.removeItem('chatKey')
+        await AsyncStorage.removeItem('profilKey')
+        console.log("sukses delete")
+        this.props.navigation.push('RuangObrolan')
     }
 
     render(){
@@ -51,7 +142,7 @@ export default class Obrolan extends Component{
             <View style={styles.bg}>
                 <View style={styles.head}>
                     <View style={{paddingRight:normalize(10)}}>
-                        <Icon onPress={() => this.props.navigation.navigate('RuangObrolan')} type={'FontAwesome5'} name="chevron-left" />
+                        <Icon onPress={() => { this.deleteAsync()}} type={'FontAwesome5'} name="chevron-left" />
                     </View>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('Profil')} style={{paddingRight:normalize(20), paddingLeft:normalize(20)}}>
                         {/* <Image style={styles.imageStyle} source={{uri: `http://192.168.56.1:4000/resources/upload/${this.state.photo}`}} /> */}
@@ -84,7 +175,7 @@ export default class Obrolan extends Component{
                             maxLength={255}
                         />
                     </View>
-                    <TouchableOpacity style={[styles.imageContainer, {marginLeft:normalize(15)}]}>
+                    <TouchableOpacity onPress={() => this.onSend(this.state.id1, this.state.id2, this.state.kode, this.state.kode2)} style={[styles.imageContainer, {marginLeft:normalize(15)}]}>
                         <Image 
                             source={send}
                             style={styles.imageSend}

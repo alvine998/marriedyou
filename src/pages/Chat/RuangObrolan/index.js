@@ -15,7 +15,9 @@ export default class RuangObrolan extends Component{
             nama:'',
             msg:'',
             image:'',
-            collect:[]
+            collect:[],
+            target_id:'',
+            obrolan_id:''
         }
     }
 
@@ -35,10 +37,12 @@ export default class RuangObrolan extends Component{
         return(
             <View style={{paddingTop:normalize(20)}}>
                     {
-                        this.state.collect.reverse() && this.state.collect.map((res,i) => {
-                            return (<TouchableOpacity key={i} style={styles.border}>
-                            {res.users_target.reverse() && res.users_target.map((el) => {
-                                   return(<View style={{flexDirection:'row', padding:normalize(10)}}>
+                        this.state.collect.map((res,i) => {
+                            return(<View key={i}>
+                            {res.users_target.map((el,i) => {
+                                   return(
+                                    <TouchableOpacity key={i} onPress={() => [this.props.navigation.push('Obrolan'), this.setChat(el._id, res._id)]} style={styles.border}>
+                                       <View style={{flexDirection:'row', padding:normalize(10)}}>
                                         <View style={styles.imageContainer}>
                                             {
                                                 el.image !== '' && (
@@ -50,23 +54,38 @@ export default class RuangObrolan extends Component{
     
                                         <View style={{paddingLeft:normalize(20)}}>
                                             <Text style={styles.fontName}>{el.nama}</Text>
-                                            <Text style={styles.fontText}>{res.msg}</Text>
+                                            <Text style={styles.fontText}>{res.msg[1]}</Text>
                                         </View>
     
                                         <Right/>
                                         <View style={styles.availChatCircle}>
                                             <Text style={{color:'white'}}>{res._id}</Text>
                                         </View>
-                                    </View>)
+                                    </View>
+                                    </TouchableOpacity>
+                                    )
                             })}
-                            </TouchableOpacity>
-                            )  
+                            </View>
+                            )
                         })
                     }
             </View>
         )
     }
 
+
+    async setChat(id, iid){
+        const dataObrolan = {
+            target_id: id,
+            obrolan_id: iid
+        }
+        await AsyncStorage.setItem('chatKey', JSON.stringify(dataObrolan))
+        .then(
+            res => {
+                console.log("Thanks ",res)
+            }
+        )
+    }
 
     async getChat(){
         await AsyncStorage.getItem('emailKey')

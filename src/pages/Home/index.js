@@ -130,12 +130,12 @@ export default class Home extends Component{
                         <Image source={logo} style={styles.imageStyle} />
                     </View>
                     <ScrollView>
-                    <View style={{flexDirection:'row'}}>
+                    <View>
                         <View style={styles.borderPosition1}>
                             {
                                 this.state.collection.sort(() => Math.random() - Math.random()).find(() => true) && this.state.collection.map((value, key) => {
                                     return (
-                                        <View key={key} style={{paddingTop:normalize(20), flexDirection:'row'}}>
+                                        <View key={key} style={{paddingTop:normalize(20), paddingLeft:normalize(10)}}>
                                             <TouchableOpacity onPress={() => {this.props.navigation.navigate('Profil'), this.setDataId(value._id)}}>
                                                 <View style={styles.border}>
                                                     {
@@ -159,7 +159,7 @@ export default class Home extends Component{
                             }
                         </View>
 
-                        <View style={styles.borderPosition}>
+                        {/* <View style={styles.borderPosition}>
                             {
                                 this.state.collection.sort(() => Math.random() - Math.random()).find(() => true) && this.state.collection.map((value, key) => {
                                     return (
@@ -185,7 +185,7 @@ export default class Home extends Component{
                                     )
                                 })
                             }
-                        </View>
+                        </View> */}
 
                         {/* <View style={{flexDirection:'row', paddingLeft:normalize(30), paddingTop:normalize(0)}}>
                             <View style={styles.border}>
@@ -259,6 +259,7 @@ const styles = StyleSheet.create({
         flex:1
     },
     borderPosition1:{
+        flexDirection:'row',
         flexWrap:'wrap',
         paddingRight:normalize(10), 
         paddingTop:normalize(30), 
