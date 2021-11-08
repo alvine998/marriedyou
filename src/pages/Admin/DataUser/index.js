@@ -49,12 +49,12 @@ export default class DataUser extends Component{
                                 </TouchableOpacity>
 
                             <View style={{paddingTop:normalize(20)}} />
-                            <TouchableOpacity style={styles.square}>
+                            {/* <TouchableOpacity style={styles.square}>
                                 <View style={{alignItems:'center', paddingTop:normalize(40)}}>
                                     <Icon type={"FontAwesome5"} name="user-slash" style={{fontSize:normalize(50), color:'#62CBEC'}} />
                                     <Text style={styles.fontCard}>Block User</Text>
                                 </View>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                         </View>
                         <View style={{paddingLeft:normalize(20)}} />
                         <View style={{flexWrap:'wrap'}}>

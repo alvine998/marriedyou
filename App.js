@@ -4,11 +4,12 @@ import React from "react";
 import { View } from "react-native";
 import BotNav from "./src/components/BotNav";
 import Account from "./src/pages/Account";
+import IsiChat from "./src/pages/Admin/BalasPesan/IsiChat";
+import ListChat from "./src/pages/Admin/BalasPesan/ListChat";
 import Dashboard from "./src/pages/Admin/Dashboard";
 import DataUser from "./src/pages/Admin/DataUser";
 import BiodataUser from "./src/pages/Admin/DataUser/BiodataUser";
 import IsiBiodataUser from "./src/pages/Admin/DataUser/IsiBiodataUser";
-import ListChat from "./src/pages/Admin/ListChat";
 import Kegiatan from "./src/pages/Agenda/Kegiatan";
 import Obrolan from "./src/pages/Chat/Obrolan";
 import RuangObrolan from "./src/pages/Chat/RuangObrolan";
@@ -53,6 +54,8 @@ const App = () => {
         {/* <Stack.Screen name="DataUser" component={DataUser}/> */}
         {/* Admin Balas Pesan */}
         <Stack.Screen name="ListChat" component={ListChat}/>
+        <Stack.Screen name="IsiChat" component={IsiChat}/>
+
 
 
 

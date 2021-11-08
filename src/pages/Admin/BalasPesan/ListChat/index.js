@@ -1,14 +1,42 @@
+import AsyncStorage from "@react-native-community/async-storage";
+import axios from "axios";
 import { Button, Header, Icon } from "native-base";
 import React, {Component} from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import normalize from "react-native-normalize";
 
 export default class ListChat extends Component{
     constructor(props){
         super(props);
         this.state={
-
+            collection:[],
+            refresh: false
         }
+    }
+
+    getDataChat(){
+        axios.get(`http://10.0.2.2:4000/chats/`).then(
+            res => {
+                const collection = res.data;
+                this.setState({collection});
+            }
+        )
+    }
+
+    async setId(id){
+        await AsyncStorage.setItem('idUser', id)
+    }
+
+    componentDidMount(){
+        this.getDataChat()
+    }
+
+    onRefresh (){
+        this.setState({refresh: true})
+        setTimeout(() => {
+            this.setState({refresh: false})
+            this.getDataChat()
+        }, 2000)
     }
 
     render(){
@@ -17,15 +45,22 @@ export default class ListChat extends Component{
                 <Header style={styles.head}>
                     <Text style={styles.fontHead}>Dashboard-Admin</Text>
                 </Header>
-                <ScrollView>
+                <ScrollView refreshControl={<RefreshControl refreshing={this.state.refresh} onRefresh={() => this.onRefresh()} />}>
                     <View style={styles.center}>
                         <Text style={styles.fontTitle}>Balas Pesan</Text>
                     </View>
-                    <View style={{alignItems:'center',justifyContent:'center', paddingBottom:normalize(20)}}>
-                        <TouchableOpacity style={styles.square}>
-                            <Text style={styles.fontCard}>Room Id</Text>
-                        </TouchableOpacity>
-                    </View>
+                    {
+                        this.state.collection.reverse() && this.state.collection.map((element,i) => {
+                            return(
+                                <View key={i} style={{alignItems:'center',justifyContent:'center', paddingBottom:normalize(20)}}>
+                                    <TouchableOpacity style={styles.square} onPress={() => {this.setId(element._id), this.props.navigation.push('IsiChat')}}>
+                                        <Text style={styles.fontCard}>{element._id}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )
+                        })
+                    }
+                    
                 </ScrollView>
                 <Button full warning onPress={() => this.props.navigation.navigate('Dashboard')}>
                     <Text>Kembali</Text>
@@ -43,8 +78,8 @@ const styles = StyleSheet.create({
     center:{
         alignItems:'center',
         justifyContent:'center',
-        padding:normalize(50),
-        paddingTop:normalize(50)
+        padding:normalize(20),
+        paddingTop:normalize(20)
     },
     head:{
         alignItems:'center',

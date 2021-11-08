@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import axios from "axios";
 import { Button, Header, Icon } from "native-base";
 import React, {Component} from "react";
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import normalize from "react-native-normalize";
 
 export default class IsiBiodataUser extends Component{
@@ -18,7 +18,8 @@ export default class IsiBiodataUser extends Component{
             alamat:'',
             jk:'',
             image:'',
-            status:''
+            status:'',
+            refresh:false
         }
     }
 
@@ -53,18 +54,27 @@ export default class IsiBiodataUser extends Component{
         this.getDataUser();
     }
 
+
+    onRefresh (){
+        this.setState({refresh: true})
+        setTimeout(() => {
+            this.setState({refresh: false})
+            this.getDataUser()
+        }, 2000)
+    }
+
     render(){
         return(
             <View style={styles.bg}>
                 <Header style={styles.head}>
                     <Text style={styles.fontHead}>Dashboard-Admin</Text>
                 </Header>
-                <ScrollView>
+                <ScrollView refreshControl={<RefreshControl refreshing={this.state.refresh} onRefresh={() => this.onRefresh()} />}>
                     <View style={styles.center}>
                         <Text style={styles.fontTitle}>Profil User</Text>
                     </View>
                     
-                    <ScrollView horizontal>
+                    <ScrollView  horizontal>
                         
                         <View style={{paddingBottom:normalize(20), alignItems:'center', paddingLeft:normalize(20)}}>
                             <View style={styles.center2}>
@@ -122,7 +132,7 @@ const styles = StyleSheet.create({
         alignItems:'center',
         justifyContent:'center',
         padding:normalize(20),
-        paddingTop:normalize(50)
+        paddingTop:normalize(20)
     },
     center2:{
         alignItems:'center',
