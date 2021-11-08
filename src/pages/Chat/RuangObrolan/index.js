@@ -54,7 +54,7 @@ export default class RuangObrolan extends Component{
     
                                         <View style={{paddingLeft:normalize(20)}}>
                                             <Text style={styles.fontName}>{el.nama}</Text>
-                                            <Text style={styles.fontText}>{res.msg[1]}</Text>
+                                            <Text style={styles.fontText}>{res.msg.reverse()[0]}</Text>
                                         </View>
     
                                         <Right/>

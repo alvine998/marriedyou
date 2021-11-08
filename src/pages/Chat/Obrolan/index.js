@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import axios from "axios";
 import { Icon, Right } from "native-base";
 import React, {Component} from "react";
-import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableHighlight, TouchableOpacity, View } from "react-native";
+import { Image, RefreshControl, ScrollView, StyleSheet, Text, TextInput, TouchableHighlight, TouchableOpacity, View } from "react-native";
 import normalize from "react-native-normalize";
 import { akhwat, ikhwan, logo, send } from "../../../assets";
 
@@ -23,7 +23,10 @@ export default class Obrolan extends Component{
             kode2:'',
             kode3:'',
             val:[],
-            vals:[]
+            vals:[],
+            message:[],
+            refresh:false,
+            message2:[]
         }
     }
 
@@ -40,6 +43,7 @@ export default class Obrolan extends Component{
                         console.log("Data", vals)
                         vals.map(element => {
                             console.log(element.targetid)
+                            this.setState({message: element.msg})
                             if(res == element.targetid){
                                 axios.get(`http://10.0.2.2:4000/users/id/${element.targetid}`)
                                 .then(
@@ -77,6 +81,8 @@ export default class Obrolan extends Component{
                 .then(
                     result => {
                         const val = result.data;
+                        this.setState({message2: val.msg})
+                        console.log("Mesg", val.msg)
                         val.users_target.map(e => {
                             this.setState({
                                 nama: e.nama, 
@@ -99,29 +105,73 @@ export default class Obrolan extends Component{
         this.getDataProfil();
     }
 
-    // componentDidUpdate(prevProps, prevState){
-    //     if(prevState.text !== this.state.text ){
+    renderChat(){
+        return(
+            <View>
+                {
+                    this.state.kode !== '' ?
+                    this.state.message.map((element,i) => {
+                        return(
+                            <View style={{padding:normalize(20), paddingLeft:normalize(70)}}>
+                                <View style={styles.borderChat} key={i}>
+                                    <Text>Hrllo {element}</Text>
+                                </View>
+                            </View>
+                        )
+                    }) : 
+                    this.state.message2.map((element,i) => {
+                        return(
+                            <View style={{padding:normalize(20), paddingLeft:normalize(70)}}>
+                                <View style={styles.borderChat} key={i}>
+                                    <Text>Hrllo {element}</Text>
+                                </View>
+                            </View>
+                        )
+                    })
+                }
+            </View>
+        )
+    }
 
-    //         this.setState({text: ''})
+    // componentDidUpdate(prevProps, prevState){
+    //     if(prevState.text !== this.state.text){
+
+    //         this.renderChat()
     //     }
     // }
 
-    onSend(id, id2, kode, kode2){
+    async forceUpdt(){
+        this.props.navigation.addListener('focus', async () => {
+            await this.getChat();
+            await this.getDataProfil();
+        })
+        
+    }
+
+    onSend(id, id2, kode, kode2, e){
         const data = {
             msg: this.state.text
         }
         if(this.state.text == ''){
 
         } else {
-            // axios.put(`http://10.0.2.2:4000/chatsend/${kode !== '' ? kode : kode2}`, data)
-            // .then(
-            //     res => {
-            //         console.log(res)
-            //         this.props.navigation.push('Obrolan')
-            //     }
-            // )
-            console.log("Terkirim")
-            this.setState({text:''})
+            axios.put(`http://10.0.2.2:4000/chatsend/${kode !== '' ? kode : kode2}`, data)
+            .then(
+                res => {
+                    console.log(res.data)
+                    console.log("Terkirim ", this.state.text)
+                    this.setState({text:''})
+                    axios.get(`http://10.0.2.2:4000/chats/${kode !== '' ? kode : kode2}`)
+                    .then(
+                        datas => {
+                            console.log(datas.data)
+                            this.setState({message: datas.data.msg, message2: datas.data.msg})
+                        }
+                    )
+                    // this.props.navigation.push('Obrolan')
+                }
+            )
+            
         }
             // console.log("find : ",kode)
             // console.log("find : ",kode2)
@@ -129,6 +179,12 @@ export default class Obrolan extends Component{
 
 
     }
+
+    // shouldComponentUpdate(nextState, nextProps){
+    //     if(nextState.text !== this.state.text){
+    //         this.renderChat();
+    //     }
+    // }
 
     async deleteAsync (){
         await AsyncStorage.removeItem('chatKey')
@@ -162,9 +218,11 @@ export default class Obrolan extends Component{
 
                     </View>
                 </View>
-                <ScrollView>
-                    
-                </ScrollView> 
+                <ScrollView ref={ref => {this.scrollView = ref}} onContentSizeChange={() => this.scrollView.scrollToEnd({animated: true})}>
+                    {
+                        this.renderChat()
+                    }
+                </ScrollView>
                 {/* Untuk Mengirim Pesan */}
                 <View style={styles.footer}>
                     <View style={styles.borderChat}>
@@ -207,8 +265,11 @@ const styles = StyleSheet.create({
         backgroundColor:'#fff',
         width:normalize(290),
         height:normalize(50),
-        borderRadius:10,
-        paddingLeft:normalize(20)
+        borderBottomLeftRadius:10,
+        borderTopLeftRadius:10,
+        borderTopRightRadius:10,
+        paddingLeft:normalize(20),
+        paddingTop:normalize(10)
     },
     imageStyle:{
         width:normalize(80),
