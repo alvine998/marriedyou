@@ -17,7 +17,10 @@ export default class RuangObrolan extends Component{
             image:'',
             collect:[],
             target_id:'',
-            obrolan_id:''
+            obrolan_id:'',
+            value:[],
+            chated:"",
+            id:""
         }
     }
 
@@ -54,7 +57,20 @@ export default class RuangObrolan extends Component{
     
                                         <View style={{paddingLeft:normalize(20)}}>
                                             <Text style={styles.fontName}>{el.nama}</Text>
-                                            <Text style={styles.fontText}>{res.msg.reverse()[0]}</Text>
+                                            {
+                                                this.state.id == res._id ? 
+                                                (
+                                                    <Text style={styles.fontText}>{this.state.chated}</Text>
+                                                ) : null
+                                            }
+                                            {/* {
+                                                this.state.value.map(abs => {
+                                                    const arr = abs.body;
+                                                    return(
+                                                        (<Text style={styles.fontText}>{arr[arr.length - 1]}</Text>)
+                                                    )
+                                                })
+                                            } */}
                                         </View>
     
                                         <Right/>
@@ -85,6 +101,7 @@ export default class RuangObrolan extends Component{
                 console.log("Thanks ",res)
             }
         )
+        await AsyncStorage.removeItem('profilKey')
     }
 
     async getChat(){
@@ -103,8 +120,28 @@ export default class RuangObrolan extends Component{
                                 collect.map(e => {
                                     e.users_target.map(elemet => {
                                         console.log("Hello : ", elemet.nama)
-                                        console.log("Hello : ", e.msg)
                                     })
+                                    console.log("ID : ",e._id)
+                                    axios.get(`http://10.0.2.2:4000/details/id/${e._id}`)
+                                    .then(
+                                        ex => {
+                                            const value = ex.data;
+                                            // const a = value;
+                                            // value.reverse() && value.map(exp => {
+                                            //     if(e._id == exp.chatid){
+                                            //         const parsedJSON = e
+                                            //         const bb = exp.body;
+                                            //         console.log("Sukses", exp[exp.length - 1])
+                                            //     }
+                                            // })
+                                            const arr = value.map(eee => eee.body)
+                                            const arr2 = value.map(eee => eee._id)
+                                            const chated = arr[arr.length - 1]
+                                            console.log("Logging ", arr[arr.length - 1], arr2)
+                                            this.setState({chated})
+                                            this.setState({id: arr2})
+                                        }
+                                    )
                                 })
                                 console.log(...collect)
                                 this.setState({collect})  
@@ -118,6 +155,15 @@ export default class RuangObrolan extends Component{
 
     componentDidMount(){
         this.getChat()
+        this.lastMsg()
+    }
+
+    async lastMsg(){
+        await AsyncStorage.getItem('lastChat').then(
+            res => {
+                console.log("Last ",res)
+            }
+        )
     }
 
     render(){

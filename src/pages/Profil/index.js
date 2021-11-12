@@ -30,7 +30,7 @@ export default class Profil extends Component{
         .then(
             res => {
                 console.log("id2 : ",res)
-                this.setState({id2: res})
+                this.setState({id2: res}) //Id Target
                 axios.get(`http://10.0.2.2:4000/users/id/${res}`)
                 .then(
                     result => {
@@ -60,20 +60,23 @@ export default class Profil extends Component{
                     respon => {
                         const id = respon.data._id
                         console.log("id : ", id)
-                        this.setState({id})
+                        this.setState({id}) //Id user
 
                         axios.get(`http://10.0.2.2:4000/chats/user/${id}`)
                         .then(
                             res => {
                                 const collection = res.data;
                                 collection.map(
-                                    e => {e.users.map(
+                                    e => {
+                                    e.users.map(
                                     element => {
-                                    this.setState({id3: element._id})
+                                    this.setState({id3: element._id}) //Id User
                                 })
                                     e.users_target.map(
                                     elements => {
-                                        this.setState({id4: elements._id})
+                                        if(this.state.id2 == elements._id){
+                                            this.setState({id4: elements._id}) // Id Target
+                                        }
                                         console.log("id3 : ", this.state.id3)
                                         console.log("id4 : ", this.state.id4)
                                     })}
@@ -92,6 +95,10 @@ export default class Profil extends Component{
         )
     }
 
+    async deleteChatkey(){
+        await AsyncStorage.removeItem('chatKey')
+    }
+
     onMulai(){
         const data = {
             msg: '',
@@ -103,15 +110,23 @@ export default class Profil extends Component{
         if(this.state.id3 == this.state.id && this.state.id2 == this.state.id4){
             alert("Langsung chat")
             this.props.navigation.push('Obrolan')
+            this.deleteChatkey()
         } else {
             axios.post(`http://10.0.2.2:4000/chats`, data)
             .then(
                 res => {
                     console.log("Sukses Disimpan",res.data)
                     this.props.navigation.push('Obrolan')
+                    this.deleteChatkey()
                 }
             )
         }
+
+        console.log("id : ", this.state.id)
+        console.log("id : ", this.state.id2)
+        console.log("id : ", this.state.id3)
+        console.log("id : ", this.state.id4)
+
             
         
     }

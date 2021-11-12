@@ -25,12 +25,27 @@ export default class Obrolan extends Component{
             val:[],
             vals:[],
             message:[],
+            
             refresh:false,
-            message2:[]
+            user:"",
+            lastChat:""
         }
     }
 
     async getDataProfil(){
+        await AsyncStorage.getItem('emailKey')
+        .then(
+            res => {
+                axios.get(`http://10.0.2.2:4000/users/${res}`)
+                .then(
+                    value => {
+                        const id = value.data;
+                        const a = id._id
+                        
+                    }
+                )
+            }
+        )
         await AsyncStorage.getItem('profilKey')
         .then(
             res => {
@@ -41,10 +56,11 @@ export default class Obrolan extends Component{
                     result => {
                         const vals = result.data;
                         console.log("Data", vals)
+                        
                         vals.map(element => {
                             console.log(element.targetid)
-                            this.setState({message: element.msg})
                             if(res == element.targetid){
+                                this.setState({kode: element._id, user:element.userid})
                                 axios.get(`http://10.0.2.2:4000/users/id/${element.targetid}`)
                                 .then(
                                     result => {
@@ -54,12 +70,23 @@ export default class Obrolan extends Component{
                                             usia: val.usia, 
                                             photo: val.image,
                                             jenis_kelamin: val.jenis_kelamin,
-                                            kode: val._id
-                                        })
+                                            // kode: val._id
+                                        }) 
                                         console.log(val)
                                     }
                                 )
+                                axios.get(`http://10.0.2.2:4000/details/id/${element._id}`)
+                                .then(
+                                    datas => {
+                                        const body = datas.data;
+                                        const lihat = body.map(b => b.body)
+                                        console.log("Ini juga data ",lihat[lihat.length - 1])
+                                        this.setState({lastChat: lihat[lihat.length - 1]})
+                                        this.setState({message: datas.data})
+                                    }
+                                )
                             }
+                            
                         })
                     }
                 )
@@ -77,12 +104,23 @@ export default class Obrolan extends Component{
             res => {
                 console.log(res.obrolan_id)
                 this.setState({id2: res.target_id, kode2: res.obrolan_id})
+                axios.get(`http://10.0.2.2:4000/details/id/${this.state.kode2}`)
+                    .then(
+                        datas => {
+                            console.log("ini data",datas.data)
+                            const abs = datas.data;
+                            abs.map(ee => {
+                                if(this.state.kode2 == ee.chatid){
+                                    this.setState({message: datas.data})
+                                    console.log(ee.chatid, " - " ,this.state.kode2)
+                                }
+                            })
+                        }
+                    )
                 axios.get(`http://10.0.2.2:4000/chats/${this.state.kode2}`)
                 .then(
                     result => {
                         const val = result.data;
-                        this.setState({message2: val.msg})
-                        console.log("Mesg", val.msg)
                         val.users_target.map(e => {
                             this.setState({
                                 nama: e.nama, 
@@ -91,7 +129,10 @@ export default class Obrolan extends Component{
                                 jenis_kelamin: e.jenis_kelamin,
                                 kode3: e._id
                             })
-                        })                        
+                        })  
+                        val.users.map(el => {
+                            this.setState({user: el._id})
+                        })                      
                         console.log("Data:",val)
                     }
                 )
@@ -108,24 +149,51 @@ export default class Obrolan extends Component{
     renderChat(){
         return(
             <View>
-                {
+                    {}
+                 {
                     this.state.kode !== '' ?
                     this.state.message.map((element,i) => {
                         return(
-                            <View style={{padding:normalize(20), paddingLeft:normalize(70)}}>
-                                <View style={styles.borderChat} key={i}>
-                                    <Text>Hrllo {element}</Text>
-                                </View>
-                            </View>
+                            <View key={i}>
+                                {
+                                    element.sender == 'admin' ? 
+                                    (
+                                        <View style={{padding:normalize(20), paddingLeft:normalize(20)}}>
+                                            <View style={styles.borderChat2} key={i}>
+                                                <Text>{element.body}</Text>
+                                            </View>
+                                        </View>
+                                    ) : (
+                                        <View style={{padding:normalize(20), paddingLeft:normalize(70)}}>
+                                            <View style={styles.borderChat} key={i}>
+                                                <Text>{element.body}</Text>
+                                            </View>
+                                        </View>
+                                    )
+                                } 
+                            </View>   
                         )
                     }) : 
-                    this.state.message2.map((element,i) => {
+                    this.state.message.map((element,i) => {
                         return(
-                            <View style={{padding:normalize(20), paddingLeft:normalize(70)}}>
-                                <View style={styles.borderChat} key={i}>
-                                    <Text>Hrllo {element}</Text>
-                                </View>
-                            </View>
+                            <View key={i}>
+                                {
+                                    element.sender == 'admin' ? 
+                                    (
+                                        <View style={{padding:normalize(20), paddingLeft:normalize(20)}}>
+                                            <View style={styles.borderChat2} key={i}>
+                                                <Text>{element.body}</Text>
+                                            </View>
+                                        </View>
+                                    ) : (
+                                        <View style={{padding:normalize(20), paddingLeft:normalize(70)}}>
+                                            <View style={styles.borderChat} key={i}>
+                                                <Text>{element.body}</Text>
+                                            </View>
+                                        </View>
+                                    )
+                                } 
+                            </View>   
                         )
                     })
                 }
@@ -133,39 +201,27 @@ export default class Obrolan extends Component{
         )
     }
 
-    // componentDidUpdate(prevProps, prevState){
-    //     if(prevState.text !== this.state.text){
-
-    //         this.renderChat()
-    //     }
-    // }
-
-    async forceUpdt(){
-        this.props.navigation.addListener('focus', async () => {
-            await this.getChat();
-            await this.getDataProfil();
-        })
-        
-    }
-
     onSend(id, id2, kode, kode2, e){
         const data = {
-            msg: this.state.text
+            body: this.state.text,
+            chatid: kode || kode2,
+            sender: this.state.user
         }
+        console.log(data)
         if(this.state.text == ''){
 
         } else {
-            axios.put(`http://10.0.2.2:4000/chatsend/${kode !== '' ? kode : kode2}`, data)
+            axios.post(`http://10.0.2.2:4000/details/`, data)
             .then(
                 res => {
                     console.log(res.data)
                     console.log("Terkirim ", this.state.text)
                     this.setState({text:''})
-                    axios.get(`http://10.0.2.2:4000/chats/${kode !== '' ? kode : kode2}`)
+                    axios.get(`http://10.0.2.2:4000/details/id/${kode !== '' ? kode : kode2}`)
                     .then(
                         datas => {
                             console.log(datas.data)
-                            this.setState({message: datas.data.msg, message2: datas.data.msg})
+                            this.setState({message: datas.data})
                         }
                     )
                     // this.props.navigation.push('Obrolan')
@@ -174,6 +230,7 @@ export default class Obrolan extends Component{
             
         }
             // console.log("find : ",kode)
+            // console.log("find : ", id)
             // console.log("find : ",kode2)
             // console.log("find : ", id2)
 
@@ -187,8 +244,9 @@ export default class Obrolan extends Component{
     // }
 
     async deleteAsync (){
+        // await AsyncStorage.setItem('lastChat', this.state.lastChat)
         await AsyncStorage.removeItem('chatKey')
-        await AsyncStorage.removeItem('profilKey')
+        // await AsyncStorage.removeItem('profilKey')
         console.log("sukses delete")
         this.props.navigation.push('RuangObrolan')
     }
@@ -266,6 +324,16 @@ const styles = StyleSheet.create({
         width:normalize(290),
         height:normalize(50),
         borderBottomLeftRadius:10,
+        borderTopLeftRadius:10,
+        borderTopRightRadius:10,
+        paddingLeft:normalize(20),
+        paddingTop:normalize(10)
+    },
+    borderChat2:{
+        backgroundColor:'#E7F1CC',
+        width:normalize(290),
+        height:normalize(50),
+        borderBottomRightRadius:10,
         borderTopLeftRadius:10,
         borderTopRightRadius:10,
         paddingLeft:normalize(20),

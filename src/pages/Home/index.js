@@ -262,9 +262,9 @@ const styles = StyleSheet.create({
         flexDirection:'row',
         flexWrap:'wrap',
         paddingRight:normalize(10), 
-        paddingTop:normalize(30), 
+        paddingTop:normalize(20), 
         paddingBottom:normalize(30),
-        paddingLeft:normalize(37)
+        paddingLeft:normalize(30)
     },
     borderPosition:{
         flexWrap:'wrap',
