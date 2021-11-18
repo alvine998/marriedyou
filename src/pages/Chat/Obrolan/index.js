@@ -271,8 +271,8 @@ export default class Obrolan extends Component{
                             (<Image source={{uri: `http://192.168.56.1:4000/resources/upload/${this.state.photo}`}} style={styles.imageStyle} />)
                         }
                     </TouchableOpacity>
-                    <View style={{paddingRight:normalize(100)}}>
-                    <Text style={styles.fontHeader}>{this.state.nama}, {this.state.usia}</Text>
+                    <View style={{paddingRight:normalize(80)}}>
+                    <Text style={styles.fontHeader}>{this.state.nama.substr(0,10)}, {this.state.usia}</Text>
 
                     </View>
                 </View>

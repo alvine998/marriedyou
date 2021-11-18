@@ -19,7 +19,7 @@ export default class RuangObrolan extends Component{
             target_id:'',
             obrolan_id:'',
             value:[],
-            chated:"",
+            chated:[],
             id:""
         }
     }
@@ -41,48 +41,57 @@ export default class RuangObrolan extends Component{
             <View style={{paddingTop:normalize(20)}}>
                     {
                         this.state.collect.map((res,i) => {
-                            return(<View key={i}>
-                            {res.users_target.map((el,i) => {
-                                   return(
-                                    <TouchableOpacity key={i} onPress={() => [this.props.navigation.push('Obrolan'), this.setChat(el._id, res._id)]} style={styles.border}>
-                                       <View style={{flexDirection:'row', padding:normalize(10)}}>
-                                        <View style={styles.imageContainer}>
-                                            {
-                                                el.image !== '' && (
-                                                    <Image source={{uri:`http://192.168.18.18:4000/resources/upload/${el.image}`}} style={styles.imageStyle2} />
-                                                )
-                                            }
-                                        </View>
-                                        {/* <View style={styles.onlineCircle}/> */}
-    
-                                        <View style={{paddingLeft:normalize(20)}}>
-                                            <Text style={styles.fontName}>{el.nama}</Text>
-                                            {
-                                                this.state.id == res._id ? 
-                                                (
-                                                    <Text style={styles.fontText}>{this.state.chated}</Text>
+                            return(
+                                <View>      
+                                    {res.users_target.map((el,i) => {
+                                        return(
+                                            <TouchableOpacity key={i} onPress={() => [this.props.navigation.push('Obrolan'), this.setChat(el._id, res._id)]} style={styles.border}>
+                                            <View style={{flexDirection:'row', padding:normalize(10)}}>
+                                                <View style={styles.imageContainer}>
+                                                    {
+                                                        el.image !== '' && (
+                                                            <Image source={{uri:`http://192.168.56.1:4000/resources/upload/${el.image}`}} style={styles.imageStyle2} />
+                                                        )
+                                                    }
+                                                </View>
+                                                {/* <View style={styles.onlineCircle}/> */}
+
+                                                <View style={{paddingLeft:normalize(20)}}>
+                                                    <Text style={styles.fontName}>{el.nama}</Text>
+                                                    {
+                                                        this.state.value.reverse() && this.state.value.reverse().map((abs,i) => {
+                                                            return(
+                                                                abs.chatid == res._id ? (
+                                                                    // <View key={i}>
+                                                                        <Text style={[styles.fontText, {paddingBottom:normalize(10)}]}>{abs.body}</Text>
+                                                                    // </View>
+                                                                ) : null
+                                                            )
+                                                        })
+                                                    }
+                                                </View>
+
+                                                <Right/>
+                                                {/* <View style={styles.availChatCircle}>
+                                                    <Text style={{color:'white'}}>{res._id}</Text>
+                                                </View> */}
+                                            </View>
+                                            </TouchableOpacity>
+                                            )
+                                    })}
+                                    {/* {
+                                        this.state.value.reverse() && this.state.value.reverse().map((abs,i) => {
+                                            return(
+                                                abs.chatid == res._id ? (
+                                                    // <View key={i}>
+                                                        <Text style={[styles.fontText, {paddingBottom:normalize(10)}]}>{abs.body}</Text>
+                                                    // </View>
                                                 ) : null
-                                            }
-                                            {/* {
-                                                this.state.value.map(abs => {
-                                                    const arr = abs.body;
-                                                    return(
-                                                        (<Text style={styles.fontText}>{arr[arr.length - 1]}</Text>)
-                                                    )
-                                                })
-                                            } */}
-                                        </View>
-    
-                                        <Right/>
-                                        <View style={styles.availChatCircle}>
-                                            <Text style={{color:'white'}}>{res._id}</Text>
-                                        </View>
-                                    </View>
-                                    </TouchableOpacity>
-                                    )
-                            })}
-                            </View>
-                            )
+                                            )
+                                        })
+                                    } */}
+                                </View>
+                            )   
                         })
                     }
             </View>
@@ -120,28 +129,37 @@ export default class RuangObrolan extends Component{
                                 collect.map(e => {
                                     e.users_target.map(elemet => {
                                         console.log("Hello : ", elemet.nama)
+                                        
                                     })
-                                    console.log("ID : ",e._id)
-                                    axios.get(`http://10.0.2.2:4000/details/id/${e._id}`)
-                                    .then(
-                                        ex => {
-                                            const value = ex.data;
-                                            // const a = value;
-                                            // value.reverse() && value.map(exp => {
-                                            //     if(e._id == exp.chatid){
-                                            //         const parsedJSON = e
-                                            //         const bb = exp.body;
-                                            //         console.log("Sukses", exp[exp.length - 1])
-                                            //     }
-                                            // })
-                                            const arr = value.map(eee => eee.body)
-                                            const arr2 = value.map(eee => eee._id)
-                                            const chated = arr[arr.length - 1]
-                                            console.log("Logging ", arr[arr.length - 1], arr2)
-                                            this.setState({chated})
-                                            this.setState({id: arr2})
-                                        }
-                                    )
+                                    axios.get(`http://10.0.2.2:4000/details/`)
+                                        .then(
+                                            ex => {
+                                                const value = ex.data;
+                                                // axios.get(`http://10.0.2.2:4000/details/id/${e._id}`)
+                                                // .then(
+                                                //     ff => {
+                                                //         console.log(ff.data)
+                                                //         const chated = ff.data;
+                                                //         chated.reverse().map(aaa => {
+                                                //             const b = [aaa.body]
+                                                //             console.log(b)
+                                                //             this.setState({chated: b})
+                                                //         })
+                                                //     }
+                                                // )
+                                                value.reverse().map(eee => {
+                                                    if(e._id == eee.chatid){
+                                                        console.log("Berhasil ", eee.body)
+                                                    } else {
+                                                        console.log("Gagal")
+                                                    }
+                                                })
+                                                // console.log(value.map(e => e.chatid), e._id)
+                                                // console.log("HHH",value[0])
+                                                this.setState({value})
+                                            }
+                                        )
+                                    
                                 })
                                 console.log(...collect)
                                 this.setState({collect})  
