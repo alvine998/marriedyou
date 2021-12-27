@@ -27,10 +27,26 @@ export default class BiodataUser extends Component{
                 this.setState({collection})
             }
         )
+        axios.get(`http://192.168.18.6:4000/users/`)
+        .then(
+            res => {
+                const collection = res.data;
+                console.log(collection);
+                this.setState({collection})
+            }
+        )
     }
 
     searchUser(){
         axios.get(`http://10.0.2.2:4000/search?nama=${this.state.nama}`)
+        .then(
+            res => {
+                const collect = res.data;
+                console.log(collect);
+                this.setState({collect})
+            }
+        )
+        axios.get(`http://192.168.18.6:4000/search?nama=${this.state.nama}`)
         .then(
             res => {
                 const collect = res.data;

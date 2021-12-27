@@ -22,6 +22,7 @@ export default class Obrolan extends Component{
             kode:'',
             kode2:'',
             kode3:'',
+            kode4:'',
             val:[],
             vals:[],
             message:[],
@@ -70,7 +71,7 @@ export default class Obrolan extends Component{
                                             usia: val.usia, 
                                             photo: val.image,
                                             jenis_kelamin: val.jenis_kelamin,
-                                            // kode: val._id
+                                            kode4: val._id
                                         }) 
                                         console.log(val)
                                     }
@@ -156,7 +157,7 @@ export default class Obrolan extends Component{
                         return(
                             <View key={i}>
                                 {
-                                    element.sender == 'admin' ? 
+                                    element.sender == this.state.kode3 || this.state.kode4 ? 
                                     (
                                         <View style={{padding:normalize(20), paddingLeft:normalize(20)}}>
                                             <View style={styles.borderChat2} key={i}>
@@ -178,7 +179,7 @@ export default class Obrolan extends Component{
                         return(
                             <View key={i}>
                                 {
-                                    element.sender == 'admin' ? 
+                                    element.sender == this.state.kode3 || this.state.kode4 ? 
                                     (
                                         <View style={{padding:normalize(20), paddingLeft:normalize(20)}}>
                                             <View style={styles.borderChat2} key={i}>

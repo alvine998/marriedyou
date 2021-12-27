@@ -103,7 +103,7 @@ export default class IsiBiodataUser extends Component{
                                     <View>
                                         {
                                             this.state.image !== '' ? (
-                                                <Image source={{uri: `http://192.168.18.18:4000/resources/upload/${this.state.image}`}} style={styles.sizeImg} />
+                                                <Image source={{uri: `http://10.0.2.2:4000/resources/upload/${this.state.image}`}} style={styles.sizeImg} />
                                             ) : (
                                                 <Text style={styles.fontTitle}>Belum ada foto</Text>
                                             )

@@ -21,6 +21,12 @@ export default class ListChat extends Component{
                 this.setState({collection});
             }
         )
+        axios.get(`http://192.168.18.6:4000/chats/`).then(
+            res => {
+                const collection = res.data;
+                this.setState({collection});
+            }
+        )
     }
 
     async setId(id){

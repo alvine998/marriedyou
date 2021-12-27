@@ -43,8 +43,17 @@ export default class Login extends Component{
                 this.props.navigation.push('Home')
             }
         )
+        axios.post(`http://192.168.18.6:4000/userss/login`, auth)
+        .then(
+            res => {
+                console.log(res.data)
+                alert("Berhasil Login")
+                this.setEmail()
+                this.props.navigation.push('Home')
+            }
+        )
         .catch(err => {
-            if(this.state.email == "admin@marriedyou.id" && this.state.password == "admin1234"){
+            if(this.state.email == "admin" && this.state.password == "admin"){
                 alert("Berhasil Login")
                 this.props.navigation.push('Dashboard')
                 this.setState({email:'', password:''})

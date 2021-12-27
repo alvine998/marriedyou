@@ -176,6 +176,7 @@ export default class RuangObrolan extends Component{
         this.lastMsg()
     }
 
+
     async lastMsg(){
         await AsyncStorage.getItem('lastChat').then(
             res => {

@@ -27,6 +27,7 @@ export default class IsiChat extends Component{
             message:[],
             refresh:false,
             message2:[],
+            sender:"admin"
         }
     }
 
@@ -40,8 +41,6 @@ export default class IsiChat extends Component{
                 .then(
                     result => {
                         const val = result.data;
-                        this.setState({message: val.msg})
-                        this.setState({message2: val.msg2})
                         console.log("Mesg", val.msg)
                         val.users_target.map(e => {
                             this.setState({
@@ -51,7 +50,42 @@ export default class IsiChat extends Component{
                                 jenis_kelamin: e.jenis_kelamin,
                                 kode3: e._id
                             })
-                        })                        
+                        })
+                        axios.get(`http://10.0.2.2:4000/details/id/${val._id}`)
+                        .then(
+                            rrr => {
+                                const message = rrr.data;
+                                console.log("Ini chat : ", message)
+                                this.setState({message})
+                            }
+                        )                        
+                        console.log("Data:",val)
+                    }
+                )
+
+                // Phone
+                axios.get(`http://192.168.18.6:4000/chats/${res}`)
+                .then(
+                    result => {
+                        const val = result.data;
+                        console.log("Mesg", val.msg)
+                        val.users_target.map(e => {
+                            this.setState({
+                                nama: e.nama, 
+                                usia: e.usia, 
+                                photo: e.image,
+                                jenis_kelamin: e.jenis_kelamin,
+                                kode3: e._id
+                            })
+                        })
+                        axios.get(`http://192.168.18.6:4000/details/id/${val._id}`)
+                        .then(
+                            rrr => {
+                                const message = rrr.data;
+                                console.log("Ini chat : ", message)
+                                this.setState({message})
+                            }
+                        )                        
                         console.log("Data:",val)
                     }
                 )
@@ -70,26 +104,22 @@ export default class IsiChat extends Component{
                 {
                     this.state.message.map((element,i) => {
                         return(
-                            <View style={{padding:normalize(20), paddingLeft:normalize(20)}}>
-                                <View style={styles.borderChat2} key={i}>
-                                    <Text>{element}</Text>
-                                </View>
-                            </View>
-                        )
-                    })  
-
-                    
-                }
-                {
-                    this.state.message2.map((element,i) => {
-                        return(
+                            element.sender == this.state.kode3 ? (
                             <View style={{padding:normalize(20), paddingLeft:normalize(70)}}>
                                 <View style={styles.borderChat3} key={i}>
-                                    <Text>{element}</Text>
+                                    <Text>{element.body}</Text>
                                 </View>
                             </View>
+                            ) : (
+                            <View style={{padding:normalize(20), paddingLeft:normalize(20)}}>
+                                <View style={styles.borderChat2} key={i}>
+                                    <Text>{element.body}</Text>
+                                </View>
+                            </View>
+                            )
+                            
                         )
-                    }) 
+                    })                    
                 }
             </View>
         )
@@ -97,22 +127,42 @@ export default class IsiChat extends Component{
 
     onSend(kode){
         const data = {
-            msg2: this.state.text
+            body: this.state.text,
+            chatid: kode,
+            sender: this.state.kode3
         }
+        console.log(data)
         if(this.state.text == ''){
 
         } else {
-            axios.put(`http://10.0.2.2:4000/chatsend/${kode}`, data)
+            axios.post(`http://10.0.2.2:4000/details/`, data)
             .then(
                 res => {
                     console.log(res.data)
-                    console.log("Terkirim ", this.state.text)
+                    console.log("Terkirim ", this.state.text + this.state.sender)
                     this.setState({text:''})
-                    axios.get(`http://10.0.2.2:4000/chats/${kode}`)
+                    axios.get(`http://10.0.2.2:4000/details/id/${kode}`)
                     .then(
                         datas => {
                             console.log(datas.data)
-                            this.setState({message2: datas.data.msg2})
+                            this.setState({message: datas.data})
+                        }
+                    )
+                }
+            )
+
+            // Phone
+            axios.post(`http://192.168.18.6:4000/details/`, data)
+            .then(
+                res => {
+                    console.log(res.data)
+                    console.log("Terkirim ", this.state.text + this.state.sender)
+                    this.setState({text:''})
+                    axios.get(`http://192.168.18.6:4000/details/id/${kode}`)
+                    .then(
+                        datas => {
+                            console.log(datas.data)
+                            this.setState({message: datas.data})
                         }
                     )
                 }
@@ -145,15 +195,15 @@ export default class IsiChat extends Component{
                             this.state.jenis_kelamin == 'Laki-laki' ?
                             this.state.photo == '' ? 
                             (<Image source={ikhwan} style={styles.imageStyle} />): 
-                            (<Image source={{uri: `http://192.168.56.1:4000/resources/upload/${this.state.photo}`}} style={styles.imageStyle} />)
+                            (<Image source={{uri: `http://10.0.2.2:4000/resources/upload/${this.state.photo}` || `http://localhost:4000/resources/upload/${this.state.photo}`}} style={styles.imageStyle} />)
                             :
                             this.state.photo == ''? 
                             (<Image source={akhwat} style={styles.imageStyle} />): 
-                            (<Image source={{uri: `http://192.168.56.1:4000/resources/upload/${this.state.photo}`}} style={styles.imageStyle} />)
+                            (<Image source={{uri: `http://10.0.2.2:4000/resources/upload/${this.state.photo}` || `http://localhost:4000/resources/upload/${this.state.photo}`}} style={styles.imageStyle} />)
                         }
                     </TouchableOpacity>
-                    <View style={{paddingRight:normalize(100)}}>
-                    <Text style={styles.fontHeader}>{this.state.nama}, {this.state.usia}</Text>
+                    <View style={{paddingRight:normalize(80)}}>
+                    <Text style={styles.fontHeader}>{this.state.nama.substr(0,10)}, {this.state.usia}</Text>
 
                     </View>
                 </View>

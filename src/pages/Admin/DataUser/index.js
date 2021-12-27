@@ -23,6 +23,14 @@ export default class DataUser extends Component{
                 console.log("Jumlah user: ", value.length)
             }
         )
+        axios.get('http://192.168.18.6:4000/users')
+        .then(
+            res => {
+                const value = res.data;
+                this.setState({jumlah_user: value.length})
+                console.log("Jumlah user: ", value.length)
+            }
+        )
     }
 
     componentDidMount(){
